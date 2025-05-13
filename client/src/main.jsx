@@ -1,21 +1,17 @@
-<<<<<<< Updated upstream
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import './index.css';
 import Loginpage from './loginpage.jsx';
-=======
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import Loginpage from './loginpage.jsx'
+import { BrowserRouter,Routes, Route } from 'react-router-dom';
 import App from './App.jsx'
->>>>>>> Stashed changes
+import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Loginpage />
+      <Routes>
+        <Route path="/" element={<Loginpage />} />
+        <Route path="/dashboard" element={<App />} />
+      </Routes>
     </BrowserRouter>
   </StrictMode>
 );
