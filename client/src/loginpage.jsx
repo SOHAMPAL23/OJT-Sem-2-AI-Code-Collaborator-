@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './loginpage.css';
 import backgroundImg from './assets/programming-concept-illustration_114360-1351-removebg-preview.png';
 import { loginUser, signupUser } from './services/api';
 import { useNavigate } from 'react-router-dom';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const Loginpage = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +13,24 @@ const Loginpage = ({ onLogin }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwt_decode(token);
+        const isExpired = decoded.exp * 1000 < Date.now();
+        if (!isExpired) {
+          navigate('/dashboard');
+        } else {
+          localStorage.removeItem('token');
+        }
+      } catch (err) {
+        console.error('Token decode error:', err);
+        localStorage.removeItem('token');
+      }
+    }
+  }, [navigate]);
 
   const handleAuth = async () => {
     const newErrors = {};
@@ -121,6 +140,8 @@ const Loginpage = ({ onLogin }) => {
                 {isLogin ? 'Sign Up' : 'Login'}
               </span>
             </p>
+
+            <GoogleLoginButton />
           </div>
         </div>
       </div>
