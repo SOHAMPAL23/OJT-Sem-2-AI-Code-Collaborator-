@@ -234,3 +234,35 @@ button[type="button"]:hover {
   font-weight: 500;
   font-family: 'Cascadia Code';
 }
+
+.resend-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  font-weight: 300;
+  font-size: 20px;
+  font-family: 'Cascadia Code';
+  background-color: transparent;
+  color: rgb(30, 182, 118);
+  border: 2px solid rgb(30, 182, 118);
+  cursor: pointer;
+  border-radius: 10px;
+  height: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.resend-button:hover {
+  background-color: rgb(30, 182, 118);
+  color: white;
+  transform: scale(1.05);
+}
+
+.app-container.dark .resend-button {
+  color: rgb(30, 182, 118);
+  border-color: rgb(30, 182, 118);
+}
+
+.app-container.dark .resend-button:hover {
+  background-color: rgb(30, 182, 118);
+  color: #1a1a1a;
+}

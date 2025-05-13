@@ -4,7 +4,7 @@ const GoogleLoginButton = () => {
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID, // Access the Google Client ID from the .env file
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID, // Access the Google Client ID from the .env file
       callback: handleCredentialResponse,
     });
 
