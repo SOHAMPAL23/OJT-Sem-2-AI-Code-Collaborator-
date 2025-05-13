@@ -1,19 +1,6 @@
 import React, { useEffect } from 'react';
 
 const GoogleLoginButton = () => {
-  useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID, // Access the Google Client ID from the .env file
-      callback: handleCredentialResponse,
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById('google-login'),
-      { theme: 'outline', size: 'large' }
-    );
-  }, []);
-
   const handleCredentialResponse = async (response) => {
     try {
       const res = await fetch('http://localhost:5000/api/auth/google-login', {
@@ -25,9 +12,8 @@ const GoogleLoginButton = () => {
       const data = await res.json();
 
       if (data.token) {
-        // Store JWT token in local storage
         localStorage.setItem('token', data.token);
-        window.location.href = '/dashboard'; // Redirect to the dashboard
+        window.location.href = '/dashboard';
       } else {
         alert('Google login failed');
       }
@@ -36,6 +22,33 @@ const GoogleLoginButton = () => {
       alert('Google login failed');
     }
   };
+
+  useEffect(() => {
+    const initializeGoogle = () => {
+      if (window.google && window.google.accounts) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: handleCredentialResponse,
+        });
+
+        window.google.accounts.id.renderButton(
+          document.getElementById('google-login'),
+          { theme: 'outline', size: 'large' }
+        );
+      } else {
+        console.error('Google API not loaded');
+      }
+    };
+
+    const interval = setInterval(() => {
+      if (window.google && window.google.accounts) {
+        clearInterval(interval);
+        initializeGoogle();
+      }
+    }, 100);
+
+    setTimeout(() => clearInterval(interval), 5000);
+  }, []);
 
   return <div id="google-login"></div>;
 };
