@@ -4,7 +4,7 @@ import backgroundImg from './assets/programming-concept-illustration_114360-1351
 import { loginUser, signupUser } from './services/api';
 import { useNavigate } from 'react-router-dom';
 
-const Loginpage = () => {
+const Loginpage = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -31,6 +31,7 @@ const Loginpage = () => {
     }
 
     setErrors({});
+<<<<<<< Updated upstream
 
     try {
       const response = isLogin
@@ -47,6 +48,15 @@ const Loginpage = () => {
       console.error('Authentication failed:', err);
       alert(err.response?.data?.msg || 'Authentication failed.');
     }
+=======
+    
+    // Call the onLogin prop with user data
+    onLogin({
+      username: username || email.split('@')[0], // Use email username if username not provided
+      email,
+      password
+    });
+>>>>>>> Stashed changes
   };
 
   const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
@@ -68,8 +78,16 @@ const Loginpage = () => {
         <div className="right-side">
           <div className="form-container">
             <div className="rightSide-text">
+<<<<<<< Updated upstream
               <h1 className="title">Code Crux</h1>
               <h2 className="subtitle">{isLogin ? 'Login to Your Account' : 'Create New Account'}</h2>
+=======
+              <h1 className="titleCode">Code </h1>
+              <h1 className="titleCrux">Crux</h1>
+              {/* <h2 className="subtitle">
+                {isLogin ? 'Login to Your Account' : 'Create New Account'}
+              </h2> */}
+>>>>>>> Stashed changes
             </div>
 
             <form onSubmit={(e) => e.preventDefault()}>

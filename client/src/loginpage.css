@@ -20,7 +20,7 @@ html, body, #root {
 }
 
 .app-container.dark {
-  background-color: black;
+  background-color: rgb(0, 0, 0);
   color: white;
 }
 
@@ -68,18 +68,18 @@ html, body, #root {
   top: 20px;
   left: 20px;
   padding: 10px;
-  border: none;
+  border: 1px solid rgb(30, 182, 118);
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .light-theme-btn {
   background-color: white;
-  border: 1px solid #2e8b57;
-  color: #2e8b57;
+  
 }
 
 .dark-theme-btn {
-  background-color: #2e8b57;
+  background-color: rgb(30, 182, 118);
   color: white;
 }
 
@@ -88,6 +88,12 @@ html, body, #root {
   width: 400px;
   height: 400px;
   object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.illustration:hover {
+  transform: scale(1.1);
+ 
 }
 
 
@@ -104,20 +110,47 @@ html, body, #root {
   margin: 0 auto;
 }
 
-.title {
-  font-size: 36px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
+.rightSide-text {
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  
 }
 
-.subtitle {
-  font-size: 20px;
-  font-weight: 500;
-  text-align: center;
-  color: #2e8b57;
-  margin-bottom: 30px;
+
+
+.titleCode {
+  color: rgb(30, 182, 118);
+  font-size: 62px;
+  font-weight: 300;
+  font-family: 'Cascadia Code';
+  
 }
+
+
+
+.titleCrux {
+  color: rgb(30, 182, 118);
+  font-size: 62px;
+  font-family: 'Cascadia Code';
+  font-weight: 300;
+  
+  
+}
+
+
+
+
+/* .subtitle {
+  font-size: 20px;
+  
+  text-align: center;
+  color: #357;
+  margin-bottom: 30px;
+} */
 
 .form-group {
   margin-bottom: 15px;
@@ -128,39 +161,54 @@ html, body, #root {
   width: 100%;
   
   padding: 12px;
-  font-size: 18px;
-  border:1px solid #2e8b57;
-  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'Cascadia Code';
+  font-weight: 300;
+  border:2px solid rgb(30, 182, 118);
+  border-radius: 5px;
   background-color: transparent;
-  color: inherit;
+  height: 50px;
   box-sizing: border-box;
+  
+  
  
 
 }
 
+/* body.dark-theme .form-group input {
+  background-color: #000000;
+  border:1px solid rgb(255, 255, 255);
+  color: white;
+} */
+
 
 .app-container.dark .form-group input {
-  background-color: #1f2937;
-  border-color: #2e8b57;
+  background-color: #000000;
+  border: 1px solid rgb(255, 255, 255);
+  
   color: white;
 }
 
 button[type="button"] {
   width: 100%;
   padding: 12px;
-  margin-top: 5px;
-  font-weight: 500;
-  font-size: 15px;
-  background-color: #2e8b57;
+  margin-top: 15px;
+  font-weight: 300;
+  font-size: 20px;
+  font-family: 'Cascadia Code';
+  background-color: rgb(30, 182, 118);
   color: white;
   border: none;
   cursor: pointer;
   border-radius: 10px;
   height: 50px;
+  transition: background-color 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
 button[type="button"]:hover {
-  background-color: #236b43;
+  transform: scale(1.05);
+  
 }
 
 
@@ -168,11 +216,13 @@ button[type="button"]:hover {
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
+  font-family: 'Cascadia Code';
+  font-weight: 300;
 }
 
 .switch-link {
   font-weight: 500;
-  color: #2e8b57;
+  color: rgb(30, 182, 118);
   cursor: pointer;
 }
 
@@ -182,4 +232,5 @@ button[type="button"]:hover {
   margin-top: 4px;
   margin-left: 4px;
   font-weight: 500;
+  font-family: 'Cascadia Code';
 }
