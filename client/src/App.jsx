@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -31,6 +32,7 @@ function App() {
     company: '',
     languages: []
   });
+  const navigate = useNavigate();
 
   const handleRoomClick = () => {
     setShowRoomModal(true);
@@ -246,6 +248,11 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   return (
     <div className="container">
       {/* Navbar */}
@@ -263,6 +270,7 @@ function App() {
             
             Share
           </button>
+          <button className="nav-link" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
