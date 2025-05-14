@@ -5,7 +5,12 @@ import { useNavigate } from 'react-router-dom';
 function App() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [participants, setParticipants] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState({
+    id: Date.now().toString(),
+    name: 'You',
+    role: 'admin',
+    isAdmin: true
+  });
   const [activePanel, setActivePanel] = useState('files');
   const [files, setFiles] = useState([]);
   const [isCreatingFile, setIsCreatingFile] = useState(false);
@@ -21,6 +26,19 @@ function App() {
   const [isResizing, setIsResizing] = useState(false);
   const toolkitRef = useRef(null);
   const [showFilesPanel, setShowFilesPanel] = useState(false);
+  const [showChatPanel, setShowChatPanel] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const [showParticipantsPanel, setShowParticipantsPanel] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [settings, setSettings] = useState({
+    notifications: true,
+    soundEnabled: true,
+    autoSave: true,
+    codeTheme: 'vs-dark',
+    fontSize: 14,
+    tabSize: 2
+  });
   const [roomMode, setRoomMode] = useState('create');
   const [roomId, setRoomId] = useState('');
   const [roomPassword, setRoomPassword] = useState('');
@@ -32,6 +50,7 @@ function App() {
     company: '',
     languages: []
   });
+  const [showRoleDropdown, setShowRoleDropdown] = useState({});
   const navigate = useNavigate();
 
   const handleRoomClick = () => {
@@ -39,32 +58,36 @@ function App() {
   };
 
   const handleCreateRoom = (password) => {
+    setParticipants([currentUser]);
+    setIsRoomModalOpen(false);
+  };
+
+  const handleJoinRoom = (roomId, password) => {
     const newUser = {
-      id: Date.now().toString(),
-      name: 'You',
-      role: 'admin',
-      isAdmin: true
+      ...currentUser,
+      role: 'viewer',
+      isAdmin: false
     };
     setCurrentUser(newUser);
     setParticipants([newUser]);
     setIsRoomModalOpen(false);
   };
 
-  const handleJoinRoom = (roomId, password) => {
-    const newUser = {
-      id: Date.now().toString(),
-      name: 'You',
-      role: 'viewer',
-      isAdmin: false
-    };
-    setCurrentUser(newUser);
-    setParticipants(prev => [...prev, newUser]);
-    setIsRoomModalOpen(false);
-  };
-
   const handleRoleChange = (participantId, newRole) => {
+    if (participantId === currentUser.id) {
+      setCurrentUser(prev => ({ ...prev, role: newRole }));
+    }
     setParticipants(prev => 
       prev.map(p => p.id === participantId ? { ...p, role: newRole } : p)
+    );
+  };
+
+  const handleNameChange = (newName) => {
+    if (!newName.trim()) return;
+    
+    setCurrentUser(prev => ({ ...prev, name: newName }));
+    setParticipants(prev => 
+      prev.map(p => p.id === currentUser.id ? { ...p, name: newName } : p)
     );
   };
 
@@ -253,6 +276,50 @@ function App() {
     navigate('/');
   };
 
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+
+    const message = {
+      id: Date.now(),
+      text: newMessage,
+      sender: currentUser?.name || 'You',
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setChatMessages(prev => [...prev, message]);
+    setNewMessage('');
+  };
+
+  const handleSettingChange = (setting, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  // Handle three-dots click
+  const handleDotsClick = (participantId) => {
+    setShowRoleDropdown(prev => ({ ...prev, [participantId]: !prev[participantId] }));
+  };
+
+  // Handle role selection
+  const handleRoleSelect = (participantId, newRole) => {
+    handleRoleChange(participantId, newRole);
+    setShowRoleDropdown(prev => ({ ...prev, [participantId]: false }));
+  };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.participant-item')) {
+        setShowRoleDropdown({});
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <div className="container">
       {/* Navbar */}
@@ -277,7 +344,7 @@ function App() {
       <div className="main">
         {/* Toolkit */}
         <div className="toolkit">
-          {!showFilesPanel ? (
+          {!showFilesPanel && !showChatPanel && !showSettingsPanel && !showParticipantsPanel ? (
             <>
               <div className="toolkit-nav">
                 <button 
@@ -287,15 +354,24 @@ function App() {
                   <span className="toolkit-icon">📁</span>
                   Files
                 </button>
-                <button className="toolkit-btn">
+                <button 
+                  className="toolkit-btn"
+                  onClick={() => setShowChatPanel(true)}
+                >
                   <span className="toolkit-icon">💬</span>
                   Chat
                 </button>
-                <button className="toolkit-btn">
+                <button 
+                  className="toolkit-btn"
+                  onClick={() => setShowParticipantsPanel(true)}
+                >
                   <span className="toolkit-icon">👥</span>
                   Participants
                 </button>
-                <button className="toolkit-btn">
+                <button 
+                  className="toolkit-btn"
+                  onClick={() => setShowSettingsPanel(true)}
+                >
                   <span className="toolkit-icon">⚙️</span>
                   Settings
                 </button>
@@ -314,100 +390,273 @@ function App() {
               </div>
             </>
           ) : (
-            <div className="files-panel">
-              <button 
-                className="back-btn"
-                onClick={() => setShowFilesPanel(false)}
-              >
-                <span>←</span> Back
-              </button>
-              
-              <div className="files-header">
-                <h3>Files</h3>
-                <button 
-                  className="create-btn"
-                  onClick={() => setIsCreatingFile(true)}
-                >
-                  + New File
-                </button>
-              </div>
-
-              {isCreatingFile && (
-                <div className="new-file-form">
-                  <input
-                    type="text"
-                    className="new-file-input"
-                    value={newFileName}
-                    onChange={(e) => setNewFileName(e.target.value)}
-                    placeholder="Enter file name"
-                    autoFocus
-                  />
-                  <div className="file-actions">
+            <>
+              {showFilesPanel && (
+                <div className="files-panel">
+                  <button 
+                    className="back-btn"
+                    onClick={() => setShowFilesPanel(false)}
+                  >
+                    <span>←</span> Back
+                  </button>
+                  
+                  <div className="files-header">
+                    <h3>Files</h3>
                     <button 
                       className="create-btn"
-                      onClick={handleCreateFile}
+                      onClick={() => setIsCreatingFile(true)}
                     >
-                      Create
+                      + New File
                     </button>
-                    <button 
-                      className="action-btn"
-                      onClick={() => {
-                        setIsCreatingFile(false);
-                        setNewFileName('');
-                        setError('');
-                      }}
-                    >
-                      Cancel
-                    </button>
+                  </div>
+
+                  {isCreatingFile && (
+                    <div className="new-file-form">
+                      <input
+                        type="text"
+                        className="new-file-input"
+                        value={newFileName}
+                        onChange={(e) => setNewFileName(e.target.value)}
+                        placeholder="Enter file name"
+                        autoFocus
+                      />
+                      <div className="file-actions">
+                        <button 
+                          className="create-btn"
+                          onClick={handleCreateFile}
+                        >
+                          Create
+                        </button>
+                        <button 
+                          className="action-btn"
+                          onClick={() => {
+                            setIsCreatingFile(false);
+                            setNewFileName('');
+                            setError('');
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {error && <div className="error-message">{error}</div>}
+
+                  <div className="file-list">
+                    {files.map(file => (
+                      <div key={file.id} className="file-item">
+                        {isRenaming === file.id ? (
+                          <input
+                            type="text"
+                            className="new-file-input"
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onBlur={() => handleRenameFile(file.id, renameValue)}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleRenameFile(file.id, renameValue);
+                              }
+                            }}
+                            autoFocus
+                          />
+                        ) : (
+                          <>
+                            <span>{file.name}</span>
+                            <div className="file-actions">
+                              <button 
+                                className="action-btn"
+                                onClick={() => {
+                                  setIsRenaming(file.id);
+                                  setRenameValue(file.name);
+                                }}
+                              >
+                                ✏️
+                              </button>
+                              <button 
+                                className="action-btn"
+                                onClick={() => handleDeleteFile(file.id)}
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {error && <div className="error-message">{error}</div>}
-
-              <div className="file-list">
-                {files.map(file => (
-                  <div key={file.id} className="file-item">
-                    {isRenaming === file.id ? (
+              {showChatPanel && (
+                <div className="chat-panel">
+                  <button 
+                    className="back-btn"
+                    onClick={() => setShowChatPanel(false)}
+                  >
+                    <span>←</span> Back
+                  </button>
+                  
+                  <div className="chat-container">
+                    <div className="chat-messages">
+                      {chatMessages.map(message => (
+                        <div key={message.id} className="chat-message">
+                          <div className="message-header">
+                            <span className="message-sender">{message.sender}</span>
+                            <span className="message-time">{message.timestamp}</span>
+                          </div>
+                          <div className="message-content">{message.text}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <form className="chat-input-container" onSubmit={handleSendMessage}>
                       <input
                         type="text"
-                        className="new-file-input"
-                        value={renameValue}
-                        onChange={(e) => setRenameValue(e.target.value)}
-                        onBlur={() => handleRenameFile(file.id, renameValue)}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            handleRenameFile(file.id, renameValue);
-                          }
-                        }}
-                        autoFocus
+                        className="chat-input"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type a message..."
                       />
-                    ) : (
-                      <>
-                        <span>{file.name}</span>
-                        <div className="file-actions">
-                          <button 
-                            className="action-btn"
-                            onClick={() => {
-                              setIsRenaming(file.id);
-                              setRenameValue(file.name);
-                            }}
-                          >
-                            ✏️
-                          </button>
-                          <button 
-                            className="action-btn"
-                            onClick={() => handleDeleteFile(file.id)}
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </>
-                    )}
+                      <button type="submit" className="send-button">
+                        Send
+                      </button>
+                    </form>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+              )}
+
+              {showParticipantsPanel && (
+                <div className="participants-panel">
+                  <button 
+                    className="back-btn"
+                    onClick={() => setShowParticipantsPanel(false)}
+                  >
+                    <span>←</span> Back
+                  </button>
+                  
+                  <div className="participants-list">
+                    <h3>Participants</h3>
+                    {[currentUser, ...participants.filter(p => p.id !== currentUser.id)].map(participant => (
+                      <div key={participant.id} className={`participant-item${participant.id === currentUser.id ? ' current-user' : ''}`}> 
+                        <div className="participant-info">
+                          <span className="participant-name">{participant.name}</span>
+                        </div>
+                        <div className="participant-actions">
+                          <button
+                            className="dots-btn"
+                            onClick={() => handleDotsClick(participant.id)}
+                            tabIndex={0}
+                            aria-label="Change role"
+                          >
+                            &#8942;
+                          </button>
+                          {showRoleDropdown[participant.id] && (
+                            <div className="role-dropdown">
+                              <div
+                                className="role-option"
+                                onClick={() => handleRoleSelect(participant.id, 'admin')}
+                              >Admin</div>
+                              <div
+                                className="role-option"
+                                onClick={() => handleRoleSelect(participant.id, 'editor')}
+                              >Editor</div>
+                              <div
+                                className="role-option"
+                                onClick={() => handleRoleSelect(participant.id, 'viewer')}
+                              >Viewer</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {showSettingsPanel && (
+                <div className="settings-panel">
+                  <button 
+                    className="back-btn"
+                    onClick={() => setShowSettingsPanel(false)}
+                  >
+                    <span>←</span> Back
+                  </button>
+                  
+                  <div className="settings-container">
+                    <h3>Settings</h3>
+                    
+                    <div className="settings-group">
+                      <h4>General</h4>
+                      <div className="setting-item">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={settings.notifications}
+                            onChange={(e) => handleSettingChange('notifications', e.target.checked)}
+                          />
+                          Enable Notifications
+                        </label>
+                      </div>
+                      <div className="setting-item">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={settings.soundEnabled}
+                            onChange={(e) => handleSettingChange('soundEnabled', e.target.checked)}
+                          />
+                          Enable Sound
+                        </label>
+                      </div>
+                      <div className="setting-item">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={settings.autoSave}
+                            onChange={(e) => handleSettingChange('autoSave', e.target.checked)}
+                          />
+                          Auto Save
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="settings-group">
+                      <h4>Editor</h4>
+                      <div className="setting-item">
+                        <label>Code Theme</label>
+                        <select
+                          value={settings.codeTheme}
+                          onChange={(e) => handleSettingChange('codeTheme', e.target.value)}
+                        >
+                          <option value="vs-dark">Dark</option>
+                          <option value="vs-light">Light</option>
+                          <option value="hc-black">High Contrast</option>
+                        </select>
+                      </div>
+                      <div className="setting-item">
+                        <label>Font Size</label>
+                        <input
+                          type="number"
+                          value={settings.fontSize}
+                          onChange={(e) => handleSettingChange('fontSize', parseInt(e.target.value))}
+                          min="8"
+                          max="24"
+                        />
+                      </div>
+                      <div className="setting-item">
+                        <label>Tab Size</label>
+                        <input
+                          type="number"
+                          value={settings.tabSize}
+                          onChange={(e) => handleSettingChange('tabSize', parseInt(e.target.value))}
+                          min="2"
+                          max="8"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
