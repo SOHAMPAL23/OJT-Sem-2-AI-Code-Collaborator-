@@ -5,17 +5,18 @@ import { loginUser, signupUser } from './services/api';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import { jwtDecode } from 'jwt-decode';
+import { useTheme } from './context/ThemeContext';
 
 const Loginpage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [errors, setErrors] = useState({});
   const [verificationCode, setVerificationCode] = useState('');
   const [needsVerification, setNeedsVerification] = useState(false);
   const navigate = useNavigate();
+  const { isDarkTheme, toggleTheme } = useTheme();
 
   useEffect(() => {
     try {
@@ -148,8 +149,6 @@ const Loginpage = () => {
       alert('Failed to resend verification code');
     }
   };
-
-  const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
 
   // Add useEffect to monitor needsVerification state
   useEffect(() => {

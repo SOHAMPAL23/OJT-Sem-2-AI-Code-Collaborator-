@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from './context/ThemeContext';
 
 function App() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -19,7 +20,6 @@ function App() {
   const [isRenaming, setIsRenaming] = useState(null);
   const [renameValue, setRenameValue] = useState('');
   const [showToolkitPanel, setShowToolkitPanel] = useState(false);
-  const [theme, setTheme] = useState('light');
   const [fontSize, setFontSize] = useState('medium');
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [toolkitWidth, setToolkitWidth] = useState(300);
@@ -52,6 +52,7 @@ function App() {
   });
   const [showRoleDropdown, setShowRoleDropdown] = useState({});
   const navigate = useNavigate();
+  const { isDarkTheme, toggleTheme } = useTheme();
 
   const handleRoomClick = () => {
     setShowRoomModal(true);
@@ -134,11 +135,6 @@ function App() {
     setShowToolkitPanel(false);
   };
 
-  const handleThemeChange = (newTheme) => {
-    setTheme(newTheme);
-    document.body.className = newTheme === 'dark' ? 'dark-theme' : '';
-  };
-
   const handleFontSizeChange = (size) => {
     setFontSize(size);
     document.documentElement.style.fontSize = 
@@ -171,12 +167,6 @@ function App() {
         setToolkitWidth(newWidth);
       }
     }
-  };
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.body.className = newTheme === 'dark' ? 'dark-theme' : '';
   };
 
   const handleProfileClick = () => {
@@ -321,7 +311,7 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
+    <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
       {/* Navbar */}
       <nav className="header">
         <div className="header-container">
@@ -334,7 +324,6 @@ function App() {
             <button className="nav-link" onClick={handleProfileClick}>Profile</button>
           </div>
           <button className="share-btn">
-            
             Share
           </button>
           <button className="nav-link" onClick={handleLogout}>Logout</button>
@@ -379,13 +368,13 @@ function App() {
               
               <div className="theme-toggle">
                 <button 
-                  className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                  className={`theme-btn ${isDarkTheme ? 'active' : ''}`}
                   onClick={toggleTheme}
                 >
                   <span className="theme-icon">
-                    {theme === 'light' ? '🌙' : '☀️'}
+                    {isDarkTheme ? '☀️' : '🌙'}
                   </span>
-                  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                  {isDarkTheme ? 'Light Mode' : 'Dark Mode'}
                 </button>
               </div>
             </>
