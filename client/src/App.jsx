@@ -460,11 +460,12 @@ function App() {
                   <input
                     type="text"
                     className="profile-input"
-                    placeholder="Enter your username"
-                    value={profileData.username}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, username: e.target.value }))}
+                    value={localStorage.getItem('username') || profileData.username}
+                    readOnly
+                    style={{ backgroundColor: '#f0f0f0', cursor: 'not-allowed' }}
                   />
                 </div>
+                <p className="profile-help-text">Your unique username is automatically generated</p>
               </div>
 
               <div className="profile-input-group">

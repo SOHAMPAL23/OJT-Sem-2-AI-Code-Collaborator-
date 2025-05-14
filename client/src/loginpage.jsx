@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import { jwtDecode } from 'jwt-decode';
 
-const Loginpage = ({ onLogin }) => {
+const Loginpage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -63,22 +63,41 @@ const Loginpage = ({ onLogin }) => {
         ? await loginUser({ email, password })
         : await signupUser({ username, email, password });
 
+      console.log('Response:', response);
+
       if (response.data && response.data.token) {
         localStorage.setItem('token', response.data.token);
+        if (response.data.username) {
+          localStorage.setItem('username', response.data.username);
+        }
         navigate('/dashboard');
       } else if (response.data && response.data.needsVerification) {
+        console.log('Setting needsVerification to true');
         setNeedsVerification(true);
-        alert('Please check your email for the verification code');
+        if (response.data.username) {
+          setUsername(response.data.username);
+          localStorage.setItem('username', response.data.username);
+        }
+        setErrors({ auth: 'Please check your email for the verification code' });
       } else {
-        alert(response.data.msg || 'Success');
+        setErrors({ auth: response.data.msg || 'Success' });
       }
     } catch (err) {
       console.error('Authentication failed:', err);
       if (err.response?.data?.needsVerification) {
+        console.log('Error response needs verification');
         setNeedsVerification(true);
-        alert('Please check your email for the verification code');
+        if (err.response.data.username) {
+          setUsername(err.response.data.username);
+          localStorage.setItem('username', err.response.data.username);
+        }
+        setErrors({ auth: 'Please check your email for the verification code' });
       } else {
-        alert(err.response?.data?.msg || 'Authentication failed.');
+        const errorMessage = err.response?.data?.msg || 'Authentication failed.';
+        setErrors(prev => ({
+          ...prev,
+          auth: errorMessage
+        }));
       }
     }
   };
@@ -97,16 +116,20 @@ const Loginpage = ({ onLogin }) => {
       });
 
       const data = await response.json();
+      console.log('Verification response:', data);
 
       if (response.ok && data.token) {
         localStorage.setItem('token', data.token);
+        if (data.username) {
+          localStorage.setItem('username', data.username);
+        }
         navigate('/dashboard');
       } else {
-        alert(data.msg || 'Verification failed');
+        setErrors({ verificationCode: data.msg || 'Verification failed' });
       }
     } catch (err) {
       console.error('Verification failed:', err);
-      alert('Verification failed. Please try again.');
+      setErrors({ verificationCode: 'Verification failed. Please try again.' });
     }
   };
 
@@ -127,6 +150,11 @@ const Loginpage = ({ onLogin }) => {
   };
 
   const toggleTheme = () => setIsDarkTheme(!isDarkTheme);
+
+  // Add useEffect to monitor needsVerification state
+  useEffect(() => {
+    console.log('needsVerification state:', needsVerification); // Debug log
+  }, [needsVerification]);
 
   return (
     <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
@@ -157,6 +185,7 @@ const Loginpage = ({ onLogin }) => {
 
             {needsVerification ? (
               <form onSubmit={(e) => e.preventDefault()}>
+                {errors.auth && <p className="error-text">{errors.auth}</p>}
                 <div className="form-group">
                   <input
                     type="text"
@@ -181,6 +210,7 @@ const Loginpage = ({ onLogin }) => {
               </form>
             ) : (
               <form onSubmit={(e) => e.preventDefault()}>
+                {errors.auth && <p className="error-text">{errors.auth}</p>}
                 {!isLogin && (
                   <div className="form-group">
                     <input
@@ -225,6 +255,7 @@ const Loginpage = ({ onLogin }) => {
                     setIsLogin(!isLogin);
                     setUsername('');
                     setEmail('');
+                    setPassword('');
                     setErrors({});
                   }}
                 >

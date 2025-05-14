@@ -10,6 +10,15 @@ const bcrypt = require('bcryptjs');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+const generateRandomUsername = () => {
+  const adjectives = ['Happy', 'Clever', 'Brave', 'Swift', 'Bright', 'Calm', 'Eager', 'Fierce', 'Gentle', 'Kind'];
+  const nouns = ['Coder', 'Dev', 'Hacker', 'Ninja', 'Guru', 'Master', 'Pro', 'Wizard', 'Genius', 'Star'];
+  const randomNum = Math.floor(Math.random() * 1000);
+  const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  return `${randomAdj}${randomNoun}${randomNum}`;
+};
+
 // Request verification code
 router.post('/request-verification', async (req, res) => {
   const { email } = req.body;
@@ -150,7 +159,7 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(400).json({ msg: 'User does not exist' });
     }
 
     // Check if user is verified
@@ -235,7 +244,53 @@ router.post('/resend-verification', async (req, res) => {
   }
 });
 
-router.post('/signup', signup);
+router.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+  
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ msg: 'Email already registered' });
+    }
+
+    // Always generate a random username
+    let username = generateRandomUsername();
+    // Check if generated username exists, if yes, generate a new one
+    while (await User.findOne({ username })) {
+      username = generateRandomUsername();
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationCode = generateVerificationCode();
+    const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    const user = new User({
+      username,
+      email,
+      password: hashedPassword,
+      verificationCode,
+      verificationCodeExpires,
+      isVerified: false
+    });
+    await user.save();
+
+    const emailSent = await sendVerificationEmail(email, verificationCode);
+    if (!emailSent) {
+      await User.deleteOne({ email });
+      return res.status(500).json({ msg: 'Failed to send verification email' });
+    }
+
+    res.json({ 
+      msg: 'Please check your email for verification code',
+      needsVerification: true,
+      email: email,
+      username: username // Send back the generated username
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 router.get('/dashboard', auth, (req, res) => {
     res.json({ msg: 'Welcome to your dashboard!', userId: req.user });
