@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -25,7 +25,8 @@ function App() {
   const [roomPassword, setRoomPassword] = useState('');
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileData, setProfileData] = useState({
-    username: '',
+    usergeneratedname: '',
+    email: '',
     description: '',
     company: '',
     languages: []
@@ -155,6 +156,94 @@ function App() {
 
   const handleProfileClick = () => {
     setShowProfileModal(true);
+  };
+
+  const fetchProfileData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+
+      console.log('Fetching profile with token:', token);
+
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Profile fetch failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData
+        });
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Fetched profile data:', data);
+      
+      setProfileData({
+        usergeneratedname: data.usergeneratedname || '',
+        email: data.email || '',
+        description: data.description || '',
+        company: data.company || '',
+        languages: data.languages || []
+      });
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (showProfileModal) {
+      fetchProfileData();
+    }
+  }, [showProfileModal]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      if (!profileData.usergeneratedname.trim()) {
+        alert('Generated name cannot be empty');
+        return;
+      }
+
+      console.log('Saving profile data:', profileData);
+
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(profileData)
+      });
+      const data = await response.json();
+      console.log('Save profile response:', data);
+      
+      if (response.ok) {
+        setProfileData(data);
+        setShowProfileModal(false);
+        alert('Profile updated successfully!');
+      } else {
+        alert(data.msg || 'Failed to update profile');
+      }
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      alert('Failed to update profile');
+    }
   };
 
   return (
@@ -454,18 +543,35 @@ function App() {
               <h2>Your Profile</h2>
               
               <div className="profile-input-group">
-                <label className="profile-input-label">Username</label>
+                <label className="profile-input-label">Generated Name</label>
                 <div className="profile-input-wrapper">
-                  <span className="profile-input-icon">👤</span>
+                  <span className="profile-input-icon">🎲</span>
                   <input
                     type="text"
+                    name="usergeneratedname"
                     className="profile-input"
-                    value={localStorage.getItem('username') || profileData.username}
-                    readOnly
-                    style={{ backgroundColor: '#f0f0f0', cursor: 'not-allowed' }}
+                    value={profileData.usergeneratedname || ''}
+                    onChange={handleInputChange}
+                    placeholder="Enter your generated name"
+                    required
                   />
                 </div>
-                <p className="profile-help-text">Your unique username is automatically generated</p>
+                <p className="profile-help-text">You can change your generated name</p>
+              </div>
+
+              <div className="profile-input-group">
+                <label className="profile-input-label">Email</label>
+                <div className="profile-input-wrapper">
+                  <span className="profile-input-icon">📧</span>
+                  <input
+                    type="email"
+                    name="email"
+                    className="profile-input"
+                    value={profileData.email || ''}
+                    disabled
+                    placeholder="Your email"
+                  />
+                </div>
               </div>
 
               <div className="profile-input-group">
@@ -523,10 +629,7 @@ function App() {
               <div className="profile-button-group">
                 <button 
                   className="profile-submit-btn"
-                  onClick={() => {
-                    // Handle profile save
-                    setShowProfileModal(false);
-                  }}
+                  onClick={handleSaveProfile}
                 >
                   <span>Save Profile</span>
                 </button>

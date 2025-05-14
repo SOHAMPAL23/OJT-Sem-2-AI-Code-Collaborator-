@@ -100,16 +100,14 @@ router.post('/google-login', async (req, res) => {
   const { credential } = req.body;
 
   try {
-    // First, decode the token without verification
     const decodedToken = jwt.decode(credential);
     if (!decodedToken) {
       throw new Error('Invalid token');
     }
 
-    // Extract user information from the decoded token
-    const { email, name, picture } = decodedToken;
+    const { email, picture, name } = decodedToken;
+    console.log('Google user data:', { email, name });
 
-    // Verify the token with Google
     try {
       await client.verifyIdToken({
         idToken: credential,
@@ -118,17 +116,28 @@ router.post('/google-login', async (req, res) => {
       });
     } catch (verifyError) {
       console.error('Token verification error:', verifyError);
-      // Continue with the login process even if verification fails
-      // This is a fallback for time synchronization issues
     }
 
     let user = await User.findOne({ email });
     if (!user) {
+      // Generate a unique usergeneratedname
+      let usergeneratedname = generateRandomUsername();
+      while (await User.findOne({ usergeneratedname })) {
+        usergeneratedname = generateRandomUsername();
+      }
+
+      // Use Google's name as username, or generate one if not available
+      const username = name || generateRandomUsername();
+
+      console.log('Creating new user with:', { username, usergeneratedname, email });
+
       user = new User({ 
-        username: name, 
+        username,
+        usergeneratedname,
         email, 
         profilePicture: picture,
-        authProvider: 'google'
+        authProvider: 'google',
+        isVerified: true
       });
       await user.save();
     }
@@ -140,7 +149,8 @@ router.post('/google-login', async (req, res) => {
     res.json({ 
       token, 
       user: { 
-        username: user.username, 
+        username: user.username,
+        usergeneratedname: user.usergeneratedname,
         email: user.email,
         profilePicture: user.profilePicture,
         authProvider: user.authProvider
@@ -253,16 +263,15 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ msg: 'Email already registered' });
     }
 
-    // Always generate a random username
+    // Generate a unique random username
     let username = generateRandomUsername();
-    // Check if generated username exists, if yes, generate a new one
     while (await User.findOne({ username })) {
       username = generateRandomUsername();
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationCode = generateVerificationCode();
-    const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     const user = new User({
       username,
@@ -284,7 +293,7 @@ router.post('/signup', async (req, res) => {
       msg: 'Please check your email for verification code',
       needsVerification: true,
       email: email,
-      username: username // Send back the generated username
+      username: username
     });
   } catch (err) {
     console.error(err);
@@ -295,5 +304,97 @@ router.post('/signup', async (req, res) => {
 router.get('/dashboard', auth, (req, res) => {
     res.json({ msg: 'Welcome to your dashboard!', userId: req.user });
   });
+
+// GET profile
+router.get('/profile', auth, async (req, res) => {
+  try {
+    console.log('Auth user data:', req.user);
+    const userId = req.user.userId;
+    console.log('Fetching profile for user:', userId);
+    
+    if (!userId) {
+      console.log('No user ID in request');
+      return res.status(401).json({ msg: 'No user ID provided' });
+    }
+
+    const user = await User.findById(userId).select('-password');
+    console.log('Found user:', user);
+    
+    if (!user) {
+      console.log('User not found');
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    const profileData = {
+      username: user.username,
+      usergeneratedname: user.usergeneratedname || user.username, // Fallback to username if usergeneratedname is not set
+      email: user.email,
+      profilePicture: user.profilePicture,
+      description: user.description || '',
+      company: user.company || '',
+      languages: user.languages || []
+    };
+    
+    console.log('Sending profile data:', profileData);
+    res.json(profileData);
+  } catch (err) {
+    console.error('Profile fetch error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// PUT update profile
+router.put('/profile', auth, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    console.log('Updating profile for user:', userId);
+    console.log('Update data:', req.body);
+
+    const { username, usergeneratedname, description, company, languages } = req.body;
+    
+    // Check if new usergeneratedname is taken by another user
+    if (usergeneratedname) {
+      const existingUser = await User.findOne({ usergeneratedname });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(400).json({ msg: 'Generated name already taken' });
+      }
+    }
+
+    const updateData = {
+      username,
+      usergeneratedname,
+      description,
+      company,
+      languages
+    };
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      console.log('User not found for update');
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    const responseData = {
+      username: updatedUser.username,
+      usergeneratedname: updatedUser.usergeneratedname,
+      email: updatedUser.email,
+      profilePicture: updatedUser.profilePicture,
+      description: updatedUser.description || '',
+      company: updatedUser.company || '',
+      languages: updatedUser.languages || []
+    };
+
+    console.log('Sending updated profile data:', responseData);
+    res.json(responseData);
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
 
 module.exports = router;
