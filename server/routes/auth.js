@@ -269,12 +269,19 @@ router.post('/signup', async (req, res) => {
       username = generateRandomUsername();
     }
 
+    // Generate a unique usergeneratedname
+    let usergeneratedname = generateRandomUsername();
+    while (await User.findOne({ usergeneratedname })) {
+      usergeneratedname = generateRandomUsername();
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationCode = generateVerificationCode();
     const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     const user = new User({
       username,
+      usergeneratedname,
       email,
       password: hashedPassword,
       verificationCode,

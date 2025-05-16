@@ -789,7 +789,7 @@ function App() {
               <h2>Your Profile</h2>
               
               <div className="profile-input-group">
-                <label className="profile-input-label">Generated Name</label>
+                <label className="profile-input-label">UserId</label>
                 <div className="profile-input-wrapper">
                   <span className="profile-input-icon">🎲</span>
                   <input
@@ -798,11 +798,10 @@ function App() {
                     className="profile-input"
                     value={profileData.usergeneratedname || ''}
                     onChange={handleInputChange}
-                    placeholder="Enter your generated name"
+                    placeholder="Enter your name"
                     required
                   />
                 </div>
-                <p className="profile-help-text">You can change your generated name</p>
               </div>
 
               <div className="profile-input-group">

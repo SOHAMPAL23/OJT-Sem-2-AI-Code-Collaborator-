@@ -258,11 +258,11 @@ button[type="button"]:hover {
 }
 
 .app-container.dark .resend-button {
-  color: rgb(30, 182, 118);
+  color: rgb(252, 255, 254);
   border-color: rgb(30, 182, 118);
 }
 
 .app-container.dark .resend-button:hover {
   background-color: rgb(30, 182, 118);
-  color: #1a1a1a;
+  color: #fafafa;
 }
