@@ -6,6 +6,8 @@ import App from './App.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import './index.css';
 import { ThemeProvider } from './context/ThemeContext';
+import DashboardPage from './Dashboard.jsx';
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,7 +19,7 @@ createRoot(document.getElementById('root')).render(
             path="/dashboard" 
             element={
               <ProtectedRoute>
-                <App />
+                <DashboardPage />
               </ProtectedRoute>
             } 
           />
