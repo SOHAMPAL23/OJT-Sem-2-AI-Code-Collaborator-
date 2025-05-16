@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import mainImage from './assets/Your paragraph text.png';
+import { useNavigate } from 'react-router-dom';
 
 function DashboardPage() {
   // State management
@@ -9,15 +10,10 @@ function DashboardPage() {
     theme: localStorage.getItem('theme') || 'dark',
     notifications: localStorage.getItem('notifications') !== 'false'
   });
+  const navigate = useNavigate();
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [profileData, setProfileData] = useState({
-    username: '',
-    languages: '',
-    field: '',
-    experience: '',
-    bio: ''
-  });
+  const [profileData, setProfileData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
 
   // Apply theme effect
@@ -93,14 +89,12 @@ function DashboardPage() {
     }));
   };
 
+  const navigateEditorPage = () => {
+    navigate('/editor')
+  }
   const handleLogout = () => {
-    const confirmLogout = window.confirm('Are you sure you want to logout?');
-    if (confirmLogout) {
-      showNotification('Logging out...');
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 1500);
-    }
+    localStorage.removeItem('token');
+    navigate('/');
   };
 
   // Add menu toggle handler
@@ -123,19 +117,18 @@ function DashboardPage() {
 
           {/* Add isMenuOpen class to nav-links */}
           <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-            <a href="#header" onClick={() => setIsMenuOpen(false)}>Home</a>
+            <a href="#first-content" onClick={() => setIsMenuOpen(false)}>Home</a>
             <a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a>
             <a href="#profile-section" onClick={() => setIsMenuOpen(false)}>Profile</a>
             <a href="#footer" onClick={() => setIsMenuOpen(false)}>About us</a>
           </div>
           
           <div className="header-buttons">
-            <button className="code-Editor">Code Editor</button>
+            <button className="code-Editor" onClick={navigateEditorPage}>Code Editor</button>
             <button className="setting" onClick={handleSettingsOpen}>Setting</button>
           </div>
         </div>
 
-        {/* Settings Modal */}
         {isSettingsOpen && (
           <>
             <div className="settings-modal" id="settingsModal">
@@ -189,7 +182,7 @@ function DashboardPage() {
           </>
         )}
 
-        <div className="main-content">
+        <div className="main-content" id='first-content'>
           <img src={mainImage} alt="code-crux" className="main-image" />
         </div>
 

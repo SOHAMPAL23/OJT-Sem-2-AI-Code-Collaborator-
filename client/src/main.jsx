@@ -23,6 +23,7 @@ createRoot(document.getElementById('root')).render(
               </ProtectedRoute>
             } 
           />
+          <Route path='/editor' element={<App/>} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

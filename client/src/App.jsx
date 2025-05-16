@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from './context/ThemeContext';
+import backImage from './assets/icons8-back-button-48.png';
 
 function App() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -261,11 +262,6 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-  };
-
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
@@ -299,6 +295,10 @@ function App() {
     setShowRoleDropdown(prev => ({ ...prev, [participantId]: false }));
   };
 
+  const goBackToDashboardPge = () => {
+    navigate('/dashboard')
+  }
+
   // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -315,6 +315,7 @@ function App() {
       {/* Navbar */}
       <nav className="header">
         <div className="header-container">
+          <img src={backImage} onClick={goBackToDashboardPge}></img>
           <div className="logo">
             <h1>Code Crux</h1>
           </div>
@@ -326,7 +327,6 @@ function App() {
           <button className="share-btn">
             Share
           </button>
-          <button className="nav-link" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
