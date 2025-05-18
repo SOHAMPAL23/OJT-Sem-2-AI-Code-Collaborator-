@@ -14,8 +14,6 @@ const io = new Server(server, {
 dotenv.config();
 connectDB();
 
-
-
 // Configure CORS
 app.use(cors({
   origin: 'http://localhost:5173',
@@ -26,7 +24,9 @@ app.use(cors({
 app.use(express.json());
 
 // Mount routes
+app.use('/api', require('./routes/compiler'));
 app.use('/api/auth', require('./routes/auth'));
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -71,4 +71,4 @@ io.on('connection', (socket) => {
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

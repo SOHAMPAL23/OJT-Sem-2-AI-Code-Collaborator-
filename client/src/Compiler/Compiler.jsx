@@ -7,7 +7,7 @@ import './Compiler.css';
 const socket = io('http://localhost:5000'); // adjust if deployed
 
 const Compiler = ({ darkMode }) => {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
   const [output, setOutput] = useState('');
   const [language, setLanguage] = useState('python');
   const [stdin, setStdin] = useState('');
