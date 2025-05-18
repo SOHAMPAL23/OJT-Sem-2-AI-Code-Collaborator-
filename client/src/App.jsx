@@ -3,6 +3,8 @@ import './App.css';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from './context/ThemeContext';
 import backImage from './assets/icons8-back-button-48.png';
+import Compiler from './Compiler/Compiler';
+import Chat from './Chat/Chat'
 
 function App() {
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -479,38 +481,7 @@ function App() {
 
               {showChatPanel && (
                 <div className="chat-panel">
-                  <button 
-                    className="back-btn"
-                    onClick={() => setShowChatPanel(false)}
-                  >
-                    <span>←</span> Back
-                  </button>
-                  
-                  <div className="chat-container">
-                    <div className="chat-messages">
-                      {chatMessages.map(message => (
-                        <div key={message.id} className="chat-message">
-                          <div className="message-header">
-                            <span className="message-sender">{message.sender}</span>
-                            <span className="message-time">{message.timestamp}</span>
-                          </div>
-                          <div className="message-content">{message.text}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <form className="chat-input-container" onSubmit={handleSendMessage}>
-                      <input
-                        type="text"
-                        className="chat-input"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message..."
-                      />
-                      <button type="submit" className="send-button">
-                        Send
-                      </button>
-                    </form>
-                  </div>
+                  {<Chat />}
                 </div>
               )}
 
@@ -651,7 +622,7 @@ function App() {
 
         <div className="workspace">
           <div className="code-editor">
-            {/* Editor content */}
+            { <Compiler/>}
           </div>
         </div>
       </div>
