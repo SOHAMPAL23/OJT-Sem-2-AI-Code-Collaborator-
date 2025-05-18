@@ -58,8 +58,8 @@ io.on('connection', (socket) => {
       message
     });
   });
-  
-  // Code change (live collaboration)
+
+  //Live collaboration logic
   socket.on("code-change", ({ roomId, code }) => {
     socket.to(roomId).emit("receive-code", code);
   });
