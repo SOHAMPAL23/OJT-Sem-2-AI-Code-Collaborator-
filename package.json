@@ -4,13 +4,14 @@
   "scripts": {
     "client": "npm start --prefix client",
     "server": "nodemon server/server.js",
-     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"green,blue\" \"npm run server\" \"npm run client\""
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"green,blue\" \"npm run server\" \"npm run client\""
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
     "nodemon": "^3.0.2"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "react-router-dom": "^7.6.0"
   }
 }
