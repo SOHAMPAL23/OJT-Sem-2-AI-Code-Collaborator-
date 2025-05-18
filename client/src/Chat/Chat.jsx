@@ -22,9 +22,12 @@ const Chat = ({ darkMode }) => {
   }, []);
 
   const joinRoom = () => {
-    if (roomId !== '') {
+    if (roomId !== '' && roomId.length>3) {
       socketRef.current.emit('join-room', roomId);
       setJoined(true);
+    }
+    else{
+      alert('Enter valid room id')
     }
   };
 
@@ -66,6 +69,7 @@ const Chat = ({ darkMode }) => {
                 </div>
               ))}
             </div>
+
             <div className="chat-controls">
               <input
                 placeholder="Type message"
@@ -73,9 +77,12 @@ const Chat = ({ darkMode }) => {
                 onChange={e => setMessage(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
               />
-              <button onClick={sendMessage}>Send</button>
+              <div className='button-space'> 
+              <button onClick={sendMessage} className='send-button'>Send</button>
               <button className="back-btn" onClick={change}>Back</button>
+              </div>
             </div>
+
           </div>
         )}
       </div>

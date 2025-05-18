@@ -51,12 +51,16 @@ body {
 .chat-controls input {
   padding: 10px;
   margin-right: 10px;
-  width: 70%;
+  width: 100%;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-sizing: border-box;
 }
-
+.button-space{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
 .chat-controls button,
 .join-room button,
 .back-btn {
@@ -90,8 +94,12 @@ body {
 .chat-controls {
   display: flex;
   align-items: center;
+  flex-direction: column;
 }
 
 .chat-room {
   align-self: flex-start;
+}
+.send-button{
+  height: 38px;
 }
