@@ -7,6 +7,7 @@ import Compiler from './Compiler/Compiler';
 import Chat from './Chat/Chat'
 
 function App() {
+    const [darkMode, setDarkMode] = useState(false); 
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [currentUser, setCurrentUser] = useState({
@@ -480,8 +481,15 @@ function App() {
               )}
 
               {showChatPanel && (
-                <div className="chat-panel">
-                  {<Chat />}
+                <div className="chat-panel">  
+                  <button 
+                    className="back-btn"
+                    onClick={() => setShowChatPanel(false)}
+                  >
+                    
+                    <span>←</span> Back
+                  </button>
+                  {<Chat darkMode={darkMode} roomId={roomId} setRoomId={setRoomId} />}
                 </div>
               )}
 
@@ -622,7 +630,7 @@ function App() {
 
         <div className="workspace">
           <div className="code-editor">
-            { <Compiler/>}
+            { <Compiler darkMode={isDarkTheme==='dark'?'dark':'light'} roomId={roomId}/>}
           </div>
         </div>
       </div>
