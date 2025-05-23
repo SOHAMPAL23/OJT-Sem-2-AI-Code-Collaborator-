@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import './Chat.css';
 
-const Chat = ({ darkMode }) => {
-  const socketRef = useRef(); 
-  const [roomId, setRoomId] = useState('');
+const Chat = ({ darkMode, roomId, setRoomId }) => {
+  const socketRef = useRef();
   const [joined, setJoined] = useState(false);
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
@@ -17,17 +16,16 @@ const Chat = ({ darkMode }) => {
     });
 
     return () => {
-      socketRef.current.disconnect(); // cleanup on unmount
+      socketRef.current.disconnect();
     };
   }, []);
 
   const joinRoom = () => {
-    if (roomId !== '' && roomId.length>3) {
+    if (roomId && roomId.length > 3) {
       socketRef.current.emit('join-room', roomId);
       setJoined(true);
-    }
-    else{
-      alert('Enter valid room id')
+    } else {
+      alert('Enter valid room id');
     }
   };
 
@@ -57,7 +55,6 @@ const Chat = ({ darkMode }) => {
               onChange={e => setRoomId(e.target.value)}
             />
             <button onClick={joinRoom}>Join</button>
-            <button className="back-btn" onClick={change}>Back</button>
           </div>
         ) : (
           <div className="chat-room">
@@ -77,12 +74,11 @@ const Chat = ({ darkMode }) => {
                 onChange={e => setMessage(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
               />
-              <div className='button-space'> 
-              <button onClick={sendMessage} className='send-button'>Send</button>
-              <button className="back-btn" onClick={change}>Back</button>
+              <div className='button-space'>
+                <button onClick={sendMessage} className='send-button'>Send</button>
+                <button className="back-btn" onClick={change}>Back</button>
               </div>
             </div>
-
           </div>
         )}
       </div>

@@ -73,9 +73,8 @@
   word-wrap: break-word;
 }
 
-/* Themes */
 .compiler-container.dark {
-  background-color: #0a192f;
+  /* background-color: #0a192f; */
   color: #e0f7ff;
 }
 
@@ -84,12 +83,10 @@
   color: #000;
 }
 
-/* Monaco Editor container adjustments */
 .monaco-editor, .monaco-editor-background {
   border-radius: 6px;
 }
 
-/* For larger Monaco editor */
 .monaco-editor-container {
   height: 500px !important;
   margin-bottom: 20px;
