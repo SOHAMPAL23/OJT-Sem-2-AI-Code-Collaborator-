@@ -1,186 +1,154 @@
-import React, { useState, useEffect } from 'react';
-import Editor from '@monaco-editor/react';
-import io from 'socket.io-client';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import './App.css';
 import { useTheme } from './context/ThemeContext';
-import './EditorPage.css';
+import Compiler from './Compiler/Compiler';
+import Navbar from './components/Editor/Navbar/Navbar';
+import Tooltip from './components/Editor/Tooltip/Tooltip';
+import RoomModal from './components/Editor/Modals/RoomModal';
+import ProfileModal from './components/Editor/Modals/ProfileModal';
 
-const EditorPage = () => {
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
-  const [language, setLanguage] = useState('javascript');
-  const [theme, setTheme] = useState('vs-dark');
-  const [fontSize, setFontSize] = useState(16);
-  const [socket, setSocket] = useState(null);
-  const [roomId, setRoomId] = useState('');
-  const [users, setUsers] = useState([]);
-  const navigate = useNavigate();
-  const { isDarkTheme } = useTheme();
+function EditorPage() {
+  const [participants, setParticipants] = useState([]);
+  const [currentUser, setCurrentUser] = useState({
+    id: Date.now().toString(),
+    name: 'You',
+    role: 'admin',
+    isAdmin: true
+  });
+  const [files, setFiles] = useState([]);
+  const [newFileName, setNewFileName] = useState('');
+  const [error, setError] = useState('');
+  const [isCreatingFile, setIsCreatingFile] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+  const [showRoomModal, setShowRoomModal] = useState(false);
+  const [showFilesPanel, setShowFilesPanel] = useState(false);
+  const [showChatPanel, setShowChatPanel] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const [showParticipantsPanel, setShowParticipantsPanel] = useState(false);
+  const [settings, setSettings] = useState({
+    notifications: true,
+    soundEnabled: true,
+    autoSave: true,
+    codeTheme: 'vs-dark',
+    fontSize: 14,
+    tabSize: 2
+  });
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const { isDarkTheme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    const newSocket = io('http://localhost:5000', {
-      transports: ['websocket'],
-      withCredentials: true
-    });
-
-    newSocket.on('connect', () => {
-      console.log('Connected to server');
-      const urlParams = new URLSearchParams(window.location.search);
-      const room = urlParams.get('room');
-      if (room) {
-        setRoomId(room);
-        newSocket.emit('join-room', room);
-      }
-    });
-
-    newSocket.on('receive-changes', (delta) => {
-      setCode(delta);
-    });
-
-    newSocket.on('user-joined', (users) => {
-      setUsers(users);
-    });
-
-    newSocket.on('user-left', (users) => {
-      setUsers(users);
-    });
-
-    setSocket(newSocket);
-
-    return () => {
-      if (newSocket) {
-        newSocket.close();
-      }
-    };
-  }, []);
-
-  const handleEditorChange = (value) => {
-    setCode(value);
-    socket?.emit('send-changes', value, roomId);
-  };
-
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
-  };
-
-  const handleThemeChange = (event) => {
-    setTheme(event.target.value);
-  };
-
-  const handleFontSizeChange = (event) => {
-    setFontSize(parseInt(event.target.value));
-  };
-
-  const handleRun = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/code/run', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code,
-          language,
-        }),
-      });
-
-      const data = await response.json();
-      setOutput(data.output);
-    } catch (error) {
-      console.error('Error running code:', error);
-      setOutput('Error running code');
+  const handleCreateFile = () => {
+    if (!newFileName.trim()) {
+      setError('File name cannot be empty');
+      return;
     }
-  };
-
-  const handleSave = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/code/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          code,
-          language,
-        }),
-      });
-
-      const data = await response.json();
-      console.log('Code saved:', data);
-    } catch (error) {
-      console.error('Error saving code:', error);
+    if (files.some(f => f.name === newFileName)) {
+      setError('File with this name already exists');
+      return;
     }
+    setFiles(prev => [...prev, { id: Date.now(), name: newFileName }]);
+    setNewFileName('');
+    setIsCreatingFile(false);
+    setError('');
   };
 
-  const handleShare = () => {
-    const roomId = Math.random().toString(36).substring(7);
-    socket?.emit('create-room', roomId);
-    setRoomId(roomId);
-    const shareUrl = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-    navigator.clipboard.writeText(shareUrl);
-    alert('Share URL copied to clipboard!');
+  const handleNewFileNameChange = (value) => {
+    setNewFileName(value);
+    setError(''); // Clear error when user starts typing
+  };
+
+  const handleDeleteFile = (fileId) => {
+    setFiles(prev => prev.filter(f => f.id !== fileId));
+  };
+
+  const handleRenameFile = (fileId, newName) => {
+    if (!newName.trim()) {
+      setError('File name cannot be empty');
+      return;
+    }
+    if (files.some(f => f.name === newName && f.id !== fileId)) {
+      setError('File with this name already exists');
+      return;
+    }
+    setFiles(prev => prev.map(f => f.id === fileId ? { ...f, name: newName } : f));
+    setIsRenaming(null);
+    setRenameValue('');
+    setError('');
+  };
+
+  const handleSettingChange = (setting, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+  };
+
+  const handleRoleChange = (participantId, newRole) => {
+    if (participantId === currentUser.id) {
+      setCurrentUser(prev => ({ ...prev, role: newRole }));
+    }
+    setParticipants(prev => 
+      prev.map(p => p.id === participantId ? { ...p, role: newRole } : p)
+    );
   };
 
   return (
-    <div className={`app ${isDarkTheme ? 'dark' : 'light'}`}>
-      <div className="toolbar">
-        <select value={language} onChange={handleLanguageChange}>
-          <option value="javascript">JavaScript</option>
-          <option value="python">Python</option>
-          <option value="java">Java</option>
-        </select>
-        <select value={theme} onChange={handleThemeChange}>
-          <option value="vs-dark">Dark</option>
-          <option value="light">Light</option>
-        </select>
-        <select value={fontSize} onChange={handleFontSizeChange}>
-          {[12, 14, 16, 18, 20, 22, 24].map((size) => (
-            <option key={size} value={size}>
-              {size}px
-            </option>
-          ))}
-        </select>
-        <button onClick={handleRun}>Run</button>
-        <button onClick={handleSave}>Save</button>
-        <button onClick={handleShare}>Share</button>
-        <button onClick={() => navigate('/dashboard')}>Dashboard</button>
-      </div>
+    <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
+      <Navbar
+        handleRoomClick={() => setShowRoomModal(true)}
+        handleProfileClick={() => setShowProfileModal(true)}
+      />
 
-      <div className="main-content">
-        <div className="editor-container">
-          <Editor
-            height="100%"
-            defaultLanguage="javascript"
-            language={language}
-            theme={theme}
-            value={code}
-            onChange={handleEditorChange}
-            options={{
-              fontSize: fontSize,
-              minimap: { enabled: false },
-            }}
+      <div className="main">
+        <div className="toolkit">
+          <Tooltip
+            showFilesPanel={showFilesPanel}
+            showChatPanel={showChatPanel}
+            showSettingsPanel={showSettingsPanel}
+            showParticipantsPanel={showParticipantsPanel}
+            onShowFilesPanel={setShowFilesPanel}
+            onShowChatPanel={setShowChatPanel}
+            onShowSettingsPanel={setShowSettingsPanel}
+            onShowParticipantsPanel={setShowParticipantsPanel}
+            files={files}
+            onCreateFile={handleCreateFile}
+            onNewFileNameChange={handleNewFileNameChange}
+            newFileName={newFileName}
+            error={error}
+            isCreatingFile={isCreatingFile}
+            setIsCreatingFile={setIsCreatingFile}
+            onRenameFile={handleRenameFile}
+            onDeleteFile={handleDeleteFile}
+            settings={settings}
+            onSettingChange={handleSettingChange}
+            currentUser={currentUser}
+            participants={participants}
+            onRoleChange={handleRoleChange}
+            isDarkTheme={isDarkTheme}
+            toggleTheme={toggleTheme}
           />
         </div>
 
-        <div className="output-container">
-          <h3>Output:</h3>
-          <pre>{output}</pre>
+        <div className="workspace">
+          <div className="code-editor">
+            <Compiler/>
+          </div>
         </div>
       </div>
 
-      {users.length > 0 && (
-        <div className="users-list">
-          <h4>Connected Users:</h4>
-          <ul>
-            {users.map((user, index) => (
-              <li key={index}>{user}</li>
-            ))}
-          </ul>
-        </div>
+      {showRoomModal && (
+        <RoomModal
+          onClose={() => setShowRoomModal(false)}
+        />
+      )}
+
+      {showProfileModal && (
+        <ProfileModal
+          onClose={() => setShowProfileModal(false)}
+        />
       )}
     </div>
   );
-};
+}
 
-export default EditorPage; 
+export default EditorPage;
