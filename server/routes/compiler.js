@@ -11,7 +11,8 @@ router.post('/compile', async (req, res) => {
       version,
       files: [{ content: code }],
       stdin
-    });   
+    });
+
     res.json(response.data);
   } catch (error) {
     console.error('Compile error:', error.response?.data || error.message);
