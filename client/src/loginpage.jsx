@@ -110,7 +110,7 @@ const Loginpage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-code', {
+      const response = await fetch('http://localhost:5001/api/auth/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code: verificationCode, username, password }),
@@ -136,7 +136,7 @@ const Loginpage = () => {
 
   const handleResendCode = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/resend-verification', {
+      const response = await fetch('http://localhost:5001/api/auth/resend-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

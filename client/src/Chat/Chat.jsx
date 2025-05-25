@@ -10,7 +10,7 @@ const Chat = ({ darkMode }) => {
   const [chat, setChat] = useState([]);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io('http://localhost:5001');
 
     socketRef.current.on('receive-message', ({ sender, message }) => {
       setChat(prev => [...prev, { sender, message }]);

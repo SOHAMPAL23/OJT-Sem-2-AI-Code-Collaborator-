@@ -4,7 +4,7 @@ import MonacoEditor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 import './Compiler.css';
 
-const socket = io('http://localhost:5000'); // adjust if deployed
+const socket = io('http://localhost:5001'); // adjust if deployed
 
 const Compiler = ({ darkMode }) => {
   const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
@@ -31,7 +31,7 @@ const Compiler = ({ darkMode }) => {
   };
 const socketRef=useRef()
 useEffect(() => {
-  socketRef.current = io('http://localhost:5000');
+  socketRef.current = io('http://localhost:5001');
 
   socketRef.current.emit('join-room', roomId);
 
@@ -54,7 +54,7 @@ useEffect(() => {
 
   const runCode = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/compile', {
+      const res = await axios.post('http://localhost:5001/api/compile', {
         language,
         version,
         code,
