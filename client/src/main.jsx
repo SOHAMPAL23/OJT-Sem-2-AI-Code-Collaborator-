@@ -1,31 +1,16 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import Loginpage from './loginpage.jsx';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import App from './App.jsx';
-import ProtectedRoute from './components/ProtectedRoute';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from './context/ThemeContext';
-import DashboardPage from './Dashboard.jsx';
+import "./index.css";
 
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
     <ThemeProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Loginpage />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route path='/editor' element={<App/>} />
-        </Routes>
+         <App />
       </BrowserRouter>
     </ThemeProvider>
-  </StrictMode>
+  </React.StrictMode>
 );
