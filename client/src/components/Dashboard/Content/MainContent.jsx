@@ -1,11 +1,17 @@
 import React from 'react';
-import mainImage from '../../../assets/Your paragraph text.png';
+import darkImage from '../../../assets/Your paragraph text.png';
+import lightImage from '../../../assets/lightThemeImage.png';
 
 const MainContent = () => {
+  const isLightTheme = document.body.classList.contains('light-theme');
+  const currentImage = isLightTheme ? lightImage : darkImage;
+
   return (
     <>
       <div className="main-content" id='first-content'>
-        <img src={mainImage} alt="code-crux" className="main-image" />
+        <div className="main-image-container">
+          <img src={currentImage} alt="code-crux" className="main-image" />
+        </div>
       </div>
 
       <div className="info-box">
