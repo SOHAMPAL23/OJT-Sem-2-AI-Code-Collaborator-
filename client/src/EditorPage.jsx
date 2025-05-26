@@ -37,8 +37,6 @@ function EditorPage() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const { isDarkTheme, toggleTheme } = useTheme();
 
-  const [roomId, setRoomId] = useState('');
-
   const handleCreateFile = () => {
     if (!newFileName.trim()) {
       setError('File name cannot be empty');
@@ -128,13 +126,12 @@ function EditorPage() {
             onRoleChange={handleRoleChange}
             isDarkTheme={isDarkTheme}
             toggleTheme={toggleTheme}
-            roomId={roomId}
           />
         </div>
 
         <div className="workspace">
           <div className="code-editor">
-            <Compiler darkMode={isDarkTheme} roomId={roomId} />
+            <Compiler/>
           </div>
         </div>
       </div>

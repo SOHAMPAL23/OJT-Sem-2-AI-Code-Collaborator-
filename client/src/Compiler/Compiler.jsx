@@ -4,68 +4,53 @@ import MonacoEditor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 import './Compiler.css';
 
-const Compiler = ({ darkMode, roomId }) => {
-  const [code, setCode] = useState(
-    'def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()'
-  );
+const socket = io('http://localhost:5000'); // adjust if deployed
+
+const Compiler = ({ darkMode }) => {
+  const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
   const [output, setOutput] = useState('');
   const [language, setLanguage] = useState('python');
   const [stdin, setStdin] = useState('');
   const [version, setVersion] = useState('3.10.0');
+  const roomId = 'default-room'; // You can use project ID or URL param
 
   const codeRef = useRef(code); // Prevent stale closure
-  const socketRef = useRef(null);
 
   const languageVersionMap = {
     python: ['3.10.0'],
     javascript: ['18.15.0'],
     cpp: ['10.2.0'],
-    java: ['15.0.2'],
+    java: ['15.0.2']
   };
 
   const languageMapForMonaco = {
     python: 'python',
     javascript: 'javascript',
     cpp: 'cpp',
-    java: 'java',
+    java: 'java'
   };
-
-  // Only connect and join socket when roomId is valid
+const socketRef=useRef()
 useEffect(() => {
-  if (!roomId) return;
-  console.log('Connecting socket for room:', roomId);
   socketRef.current = io('http://localhost:5000');
 
-  socketRef.current.on('connect', () => {
-    console.log('Socket connected, id:', socketRef.current.id);
-    socketRef.current.emit('join-room', roomId);
-  });
+  socketRef.current.emit('join-room', roomId);
 
   socketRef.current.on('receive-code', (newCode) => {
-    console.log('Received code update:', newCode);
     if (newCode !== codeRef.current) {
       setCode(newCode);
       codeRef.current = newCode;
     }
   });
 
-  socketRef.current.on('disconnect', () => {
-    console.log('Socket disconnected');
-  });
+  return () => socketRef.current.disconnect();
+}, []);
 
-  return () => {
-    socketRef.current.disconnect();
+
+  const handleEditorChange = (value) => {
+    setCode(value);
+    codeRef.current = value;
+    socket.emit('code-change', { roomId, code: value });
   };
-}, [roomId]);
-
-const handleEditorChange = (value) => {
-  setCode(value);
-  codeRef.current = value;
-  if (socketRef.current && roomId) {
-    console.log('Emitting code-change:', value);
-    socketRef.current.emit('code-change', { roomId, code: value });
-  }
-};
 
   const runCode = async () => {
     try {
@@ -73,7 +58,7 @@ const handleEditorChange = (value) => {
         language,
         version,
         code,
-        stdin,
+        stdin
       });
       setOutput(res.data.run?.output || res.data.output || 'No output');
     } catch (err) {
@@ -109,10 +94,7 @@ const handleEditorChange = (value) => {
           const boilerplate = loadBoilerplate(lang);
           setCode(boilerplate);
           codeRef.current = boilerplate;
-  
-          if (socketRef.current && roomId && roomId.trim() !== '') {
-            socketRef.current.emit('code-change', { roomId, code: boilerplate });
-          }
+          socket.emit('code-change', { roomId, code: boilerplate });
         }}
       >
         <option value="python">Python</option>
@@ -121,8 +103,7 @@ const handleEditorChange = (value) => {
         <option value="java">Java</option>
       </select>
 
-      <br />
-      <br />
+      <br /><br />
 
       <MonacoEditor
         height="500px"
@@ -133,12 +114,11 @@ const handleEditorChange = (value) => {
         options={{
           fontSize: 14,
           minimap: { enabled: false },
-          wordWrap: 'on',
+          wordWrap: 'on'
         }}
       />
 
-      <br />
-      <br />
+      <br /><br />
       <textarea
         rows="3"
         cols="80"
@@ -146,8 +126,7 @@ const handleEditorChange = (value) => {
         value={stdin}
         onChange={(e) => setStdin(e.target.value)}
       />
-      <br />
-      <br />
+      <br /><br />
       <button onClick={runCode}>Run Code</button>
       <h3>Output:</h3>
       <pre>{output}</pre>

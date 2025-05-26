@@ -8,11 +8,6 @@ const Navbar = ({ handleRoomClick, handleProfileClick }) => {
   const goBackToDashboardPge = () => {
     navigate('/dashboard');
   };
-  const shareLink=()=>{
-    navigator.clipboard.writeText('https://deployed.link').then(() => {
-      alert(`Copied to Clipboard`);
-    });
-  }
 
   return (
     <nav className="header">
@@ -22,12 +17,12 @@ const Navbar = ({ handleRoomClick, handleProfileClick }) => {
         
           <h1>Code Crux</h1>
         </div>
-        {/* <div className="nav">
+        <div className="nav">
           <button className="nav-link">Home</button>
           <button className="nav-link" onClick={handleRoomClick}>Room</button>
           <button className="nav-link" onClick={handleProfileClick}>Profile</button>
-        </div> */}
-        <button className="share-btn" onClick={shareLink}>Share</button>
+        </div>
+        <button className="share-btn">Share</button>
       </div>
     </nav>
   );
