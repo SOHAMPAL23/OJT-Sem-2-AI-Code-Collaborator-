@@ -5,6 +5,9 @@ import { io } from 'socket.io-client';
 import './Compiler.css';
 
 
+const socket = io('http://localhost:5000'); // adjust if deployed
+
+
 const Compiler = ({ darkMode }) => {
   const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
   const [output, setOutput] = useState('');
@@ -29,6 +32,20 @@ const Compiler = ({ darkMode }) => {
     java: 'java'
   };
 
+const socketRef=useRef()
+useEffect(() => {
+  socketRef.current = io('http://localhost:5000');
+
+  socketRef.current.emit('join-room', roomId);
+
+  socketRef.current.on('receive-code', (newCode) => {
+    if (newCode !== codeRef.current) {
+      setCode(newCode);
+      codeRef.current = newCode;
+    }
+  });
+
+
 
 
   const handleEditorChange = (value) => {
@@ -39,7 +56,7 @@ const Compiler = ({ darkMode }) => {
 
   const runCode = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/compile', {
+      const res = await axios.post('http://localhost:5001/api/compile', {
         language,
         version,
         code,

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 const GoogleLoginButton = () => {
   const handleCredentialResponse = async (response) => {
     try {
-      const res = await fetch('http://localhost:5000/api/auth/google-login', {
+      const res = await fetch('http://localhost:5001/api/auth/google-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: response.credential }),
@@ -50,7 +50,7 @@ const GoogleLoginButton = () => {
       }
     }, 100);
 
-    setTimeout(() => clearInterval(interval), 5000);
+    setTimeout(() => clearInterval(interval), 5001);
   }, []);
 
   return <div id="google-login"></div>;
