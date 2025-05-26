@@ -45,8 +45,8 @@ const Tooltip = ({
             className="toolkit-btn"
             onClick={() => onShowChatPanel(true)}
           >
-            <span className="toolkit-icon">💬</span>
-            Chat
+            <span className="toolkit-icon">🚪</span>
+            Room
           </button>
           <button 
             className="toolkit-btn"
@@ -104,7 +104,7 @@ const Tooltip = ({
             </button>
             <h3>Chat</h3>
           </div>
-          <Chat />
+          <Chat darkMode={isDarkTheme}/>
         </div>
       )}
 
