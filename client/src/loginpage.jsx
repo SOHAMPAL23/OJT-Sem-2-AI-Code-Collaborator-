@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './loginpage.css';
-import backgroundImg from './assets/programming-concept-illustration_114360-1351-removebg-preview.png';
+import backgroundImg from './assets/Untitled design-Photoroom.png';
 import { loginUser, signupUser } from './services/api';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import { jwtDecode } from 'jwt-decode';
-import { useTheme } from './context/ThemeContext';
 
 const Loginpage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,7 +15,6 @@ const Loginpage = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [needsVerification, setNeedsVerification] = useState(false);
   const navigate = useNavigate();
-  const { isDarkTheme, toggleTheme } = useTheme();
 
   useEffect(() => {
     try {
@@ -156,23 +154,19 @@ const Loginpage = () => {
   }, [needsVerification]);
 
   return (
-    <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
+    <div className="app-container dark">
       <div className="main-flex">
         <div className="left-side">
-          <button
-            onClick={toggleTheme}
-            className={`theme-button ${isDarkTheme ? 'dark-theme-btn' : 'light-theme-btn'}`}
-            aria-label="Toggle Theme"
-          >
-            <i className={`fas ${isDarkTheme ? 'fa-sun' : 'fa-moon'}`}></i>
-          </button>
           <img src={backgroundImg} alt="Background" className="illustration" />
         </div>
 
         <div className="right-side">
           <div className="form-container">
             <div className="rightSide-text">
-              <h1 className="title">Code Crux</h1>
+              <h1 className="title">
+                <span>Code</span>
+                <span>Crux</span>
+              </h1>
               <h2 className="subtitle">
                 {needsVerification 
                   ? 'Verify Your Email' 
