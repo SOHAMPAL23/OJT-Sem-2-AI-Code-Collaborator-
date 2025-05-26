@@ -33,7 +33,10 @@ const GoogleLoginButton = () => {
 
         window.google.accounts.id.renderButton(
           document.getElementById('google-login'),
-          { theme: 'outline', size: 'large' }
+          {   theme: "filled_black",
+            size: "large",
+            type: "standard",
+            }
         );
       } else {
         console.error('Google API not loaded');
