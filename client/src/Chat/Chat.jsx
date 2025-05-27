@@ -16,15 +16,31 @@ const Chat = ({ darkMode }) => {
   const [modalOpen, setModalOpen] = useState(true);
   const [joinExisting, setJoinExisting] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+  const savedJoined = localStorage.getItem('joined');
+  const savedRoomId = localStorage.getItem('roomId');
+
+  if (savedJoined === 'true' && savedRoomId) {
+    setJoined(true);
+    setRoomId(savedRoomId);
+    setModalOpen(false);
     socketRef.current = io('http://localhost:5000');
+    socketRef.current.emit('join-room', savedRoomId);
 
     socketRef.current.on('receive-message', ({ sender, message }) => {
       setChat(prev => [...prev, { sender, message }]);
     });
+  } else {
+    socketRef.current = io('http://localhost:5000');
+    socketRef.current.on('receive-message', ({ sender, message }) => {
+      setChat(prev => [...prev, { sender, message }]);
+    });
+  }
 
-    return () => {};
-  }, []);
+  return () => {
+    socketRef.current.disconnect();
+  };
+}, []);
 
   const handleCreateRoom = () => {
     const newRoomId = generateRoomId();

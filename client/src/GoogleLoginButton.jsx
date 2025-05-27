@@ -10,9 +10,11 @@ const GoogleLoginButton = () => {
       });
 
       const data = await res.json();
-
+      
       if (data.token) {
         localStorage.setItem('token', data.token);
+        console.log(data);
+        localStorage.setItem('username',data.username);
         window.location.href = '/dashboard';
       } else {
         alert('Google login failed');
