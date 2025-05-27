@@ -16,41 +16,37 @@ const Chat = ({ darkMode }) => {
   const [modalOpen, setModalOpen] = useState(true);
   const [joinExisting, setJoinExisting] = useState(false);
 
-  const initializeSocket=(socketRef, setChat, setJoined, setRoomId, setModalOpen)=>{
-    const savedJoined = localStorage.getItem('joined');
-    const savedRoomId = localStorage.getItem('roomId');
-    const savedName = localStorage.getItem('name'); 
+useEffect(() => {
+  const savedJoined = localStorage.getItem('joined');
+  const savedRoomId = localStorage.getItem('roomId');
 
+  if (savedJoined === 'true' && savedRoomId) {
+    setJoined(true);
+    setRoomId(savedRoomId);
+    setModalOpen(false);
     socketRef.current = io('http://localhost:5000');
+    socketRef.current.emit('join-room', savedRoomId);
 
     socketRef.current.on('receive-message', ({ sender, message }) => {
       setChat(prev => [...prev, { sender, message }]);
     });
-
-    if (savedJoined === 'true' && savedRoomId && savedName) {
-      setJoined(true);
-      setRoomId(savedRoomId);
-      setModalOpen(false);
-
-      socketRef.current.emit('join-room', { roomId: savedRoomId, name: savedName }); 
-    }
+  } else {
+    socketRef.current = io('http://localhost:5000');
+    socketRef.current.on('receive-message', ({ sender, message }) => {
+      setChat(prev => [...prev, { sender, message }]);
+    });
   }
 
-useEffect(() => {
-  initializeSocket(socketRef, setChat, setJoined, setRoomId, setModalOpen)
-  
   return () => {
     socketRef.current.disconnect();
   };
 }, []);
 
-
   const handleCreateRoom = () => {
     const newRoomId = generateRoomId();
-    const name = localStorage.getItem('name');
     setRoomId(newRoomId);
     setJoined(true);
-    socketRef.current.emit('join-room', { roomId: newRoomId, name });
+    socketRef.current.emit('join-room', newRoomId);
     setModalOpen(false);
 
     localStorage.setItem('roomId', newRoomId);
@@ -63,8 +59,7 @@ useEffect(() => {
 
   const handleJoinRoom = () => {
     if (roomId !== '' && roomId.length > 3) {
-      const name = localStorage.getItem('name');
-      socketRef.current.emit('join-room', { roomId, name });
+      socketRef.current.emit('join-room', roomId);
       setJoined(true);
       setModalOpen(false);
 

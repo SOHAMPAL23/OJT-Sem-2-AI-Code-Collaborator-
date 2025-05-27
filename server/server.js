@@ -45,25 +45,22 @@ io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   // Join a room
-  socket.on("join-room", ({roomId,name}) => {
+  socket.on("join-room", (roomId) => {
     socket.join(roomId);
     socket.roomId = roomId;
-    socket.username=name;
-    console.log(`${name} joined room ${roomId}`);
+    console.log(`${socket.id} joined room ${roomId}`);
   });
 
   // Chat message
   socket.on("send-message", ({ roomId, message }) => {
-    const senderName=socket.username || 'Anonymous'
     socket.to(roomId).emit("receive-message", {
-      sender: senderName,
+      sender: socket.id,
       message
     });
   });
   
-  // Code change (live collaboration) 
+  // Code change (live collaboration)
   socket.on("code-change", ({ roomId, code }) => {
-    console.log(`Received code-change from ${socket.username || 'Anonymous'} in room ${roomId}`);
     socket.to(roomId).emit("receive-code", code);
   });
 

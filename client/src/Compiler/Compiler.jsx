@@ -33,23 +33,16 @@ const Compiler = ({ darkMode, roomId }) => {
   // Only connect and join socket when roomId is valid
 useEffect(() => {
   if (!roomId) return;
-  console.log('[CLIENT] Attempting to connect to socket for room:', roomId);
+  console.log('Connecting socket for room:', roomId);
   socketRef.current = io('http://localhost:5000');
 
   socketRef.current.on('connect', () => {
-    console.log('[CLIENT] Socket connected with ID:', socketRef.current.id);
-
-    const storedName = localStorage.getItem('name') || 'Anonymous';
-    console.log(`[CLIENT] Emitting join-room with roomId: ${roomId}, name: ${storedName}`);
-
-    socketRef.current.emit('join-room', {
-      roomId,
-      name: storedName,
-    });
+    console.log('Socket connected, id:', socketRef.current.id);
+    socketRef.current.emit('join-room', roomId);
   });
 
   socketRef.current.on('receive-code', (newCode) => {
-    console.log('[CLIENT] Received code update:', newCode);
+    console.log('Received code update:', newCode);
     if (newCode !== codeRef.current) {
       setCode(newCode);
       codeRef.current = newCode;
@@ -57,11 +50,10 @@ useEffect(() => {
   });
 
   socketRef.current.on('disconnect', () => {
-    console.log('[CLIENT] Socket disconnected');
+    console.log('Socket disconnected');
   });
 
   return () => {
-    console.log('[CLIENT] Disconnecting socket...');
     socketRef.current.disconnect();
   };
 }, [roomId]);
@@ -69,13 +61,11 @@ useEffect(() => {
 const handleEditorChange = (value) => {
   setCode(value);
   codeRef.current = value;
-  console.log('[CLIENT] Code changed:', value);
   if (socketRef.current && roomId) {
-    console.log('[CLIENT] Emitting code-change to room:', roomId);
+    console.log('Emitting code-change:', value);
     socketRef.current.emit('code-change', { roomId, code: value });
   }
 };
-
 
   const runCode = async () => {
     try {
