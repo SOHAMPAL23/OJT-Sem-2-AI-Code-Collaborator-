@@ -224,59 +224,345 @@ button[type="button"]:hover {
   align-items: center !important;
   justify-content: center !important;
 }
-
-/* Media Queries */
-@media screen and (max-width: 768px) {
-  .main-flex {
-    flex-direction: column;
-  }
-
-  .left-side,
-  .right-side {
-    height: auto;
-    padding: 40px 20px;
+/* ====== ≤ 1095px: Large Screens (Balanced Layout) ====== */
+@media screen and (max-width: 1095px) {
+  .form-container {
+    width: 65%;
+    padding: 40px;
+    margin: 0 auto;
   }
 
   .illustration {
-    width: 300px;
-    height: 300px;
+    width: 600px;
+    height: 420px;
   }
 
-  .form-container {
-    width: 90%;
+  .title {
+    margin-bottom: 30px;
   }
 
   .title span:first-child {
-    font-size: 56px;
+    font-size: 58px;
+    letter-spacing: -0.5px;
   }
 
   .title span:last-child {
     font-size: 62px;
+    letter-spacing: -0.5px;
+  }
+
+  .rightSide-text {
+    margin-bottom: 35px;
+  }
+
+  .form-group {
+    margin-bottom: 22px;
+  }
+
+  .form-group input {
+    font-size: 16px;
+    height: 56px;
+    padding: 15px;
+  }
+
+  button[type="button"],
+  .resend-button {
+    font-size: 16px;
+    height: 56px;
+    padding: 15px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  .error-text {
+    font-size: 0.9rem;
+    margin-top: 6px;
   }
 }
 
-@media screen and (max-width: 480px) {
+/* Media Queries */
+/* ====== ≤ 980px: Small Laptops / Large Tablets ====== */
+@media screen and (max-width: 980px) {
+  .main-flex {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-side {
+    order: 1;
+    width: 100%;
+    height: auto;
+    padding: 40px 0;
+    margin-bottom: 30px;
+  }
+
+  .right-side {
+    order: 2;
+    width: 100%;
+    height: auto;
+    padding: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .illustration {
-    width: 250px;
-    height: 250px;
-  }
-
-  .title span:first-child {
-    font-size: 42px;
-  }
-
-  .title span:last-child {
-    font-size: 48px;
+    width: 650px;
+    height: 450px;
+    margin-bottom: 40px;
   }
 
   .form-container {
-    padding: 25px 15px;
+    width: 70%;
+    padding: 45px;
+    margin: 0 auto;
+    margin-bottom: 50px;
+  }
+
+  .title {
+    margin-bottom: 25px;
+  }
+
+  .title span:first-child {
+    font-size: 72px;
+  }
+
+  .title span:last-child {
+    font-size: 78px;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
   }
 
   .form-group input,
   button[type="button"],
   .resend-button {
-    height: 50px;
+    font-size: 19px;
+    height: 62px;
+    padding: 18px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 19px;
+    margin-top: 25px;
+  }
+
+  .error-text {
+    font-size: 1rem;
+    margin-top: 8px;
+  }
+}
+
+/* ====== ≤ 720px: Tablets ====== */
+@media screen and (max-width: 720px) {
+  .illustration {
+    width: 550px;
+    height: 400px;
+  }
+
+  .form-container {
+    width: 85%;
+    padding: 35px;
+  }
+
+  .title span:first-child {
+    font-size: 60px;
+  }
+
+  .title span:last-child {
+    font-size: 66px;
+  }
+
+  .form-group input,
+  button[type="button"],
+  .resend-button {
+    font-size: 17px;
+    height: 55px;
+    padding: 16px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 17px;
+  }
+}
+
+/* ====== ≤ 580px: Large Phones / Phablets ====== */
+@media screen and (max-width: 580px) {
+  .illustration {
+    width: 450px;
+    height: 330px;
+  }
+
+  .form-container {
+    width: 90%;
+    padding: 30px;
+  }
+
+  .title span:first-child {
+    font-size: 52px;
+  }
+
+  .title span:last-child {
+    font-size: 58px;
+  }
+
+  .form-group input,
+  button[type="button"],
+  .resend-button {
     font-size: 16px;
+    height: 52px;
+    padding: 14px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 16px;
+  }
+}
+
+/* ====== ≤ 440px: Mid-Sized Phones ====== */
+@media screen and (max-width: 440px) {
+  .illustration {
+    width: 360px;
+    height: 280px;
+  }
+
+  .form-container {
+    width: 92%;
+    padding: 25px;
+  }
+
+  .title span:first-child {
+    font-size: 46px;
+  }
+
+  .title span:last-child {
+    font-size: 50px;
+  }
+
+  .form-group input,
+  button[type="button"],
+  .resend-button {
+    font-size: 15px;
+    height: 48px;
+    padding: 12px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 15px;
+  }
+}
+
+/* ====== ≤ 360px: Small Phones ====== */
+@media screen and (max-width: 360px) {
+  .main-flex {
+    padding: 10px 0;
+  }
+
+  .illustration {
+    width: 300px;
+    height: 240px;
+    margin-bottom: 15px;
+  }
+
+  .form-container {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .title span:first-child {
+    font-size: 38px;
+  }
+
+  .title span:last-child {
+    font-size: 42px;
+  }
+
+  .form-group input,
+  button[type="button"],
+  .resend-button {
+    font-size: 14px;
+    height: 45px;
+    padding: 10px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 14px;
+  }
+}
+
+/* ====== ≤ 240px: Extra Small Devices ====== */
+@media screen and (max-width: 240px) {
+  .left-side {
+    padding: 20px 0;
+    height: 200px;
+  }
+
+  .illustration {
+    width: 200px;
+    height: 160px;
+    margin-bottom: 10px;
+  }
+
+  .right-side {
+    padding: 15px 0;
+  }
+
+  .form-container {
+    width: 98%;
+    padding: 15px 10px;
+  }
+
+  .title span:first-child {
+    font-size: 32px;
+    letter-spacing: 0;
+  }
+
+  .title span:last-child {
+    font-size: 36px;
+    letter-spacing: 0;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-group input {
+    font-size: 16px;
+    height: 42px;
+    padding: 8px 12px;
+  }
+
+  button[type="button"],
+  .resend-button {
+    font-size: 16px;
+    height: 42px;
+    padding: 8px;
+    margin-top: 15px;
+  }
+
+  .switch-text,
+  .switch-link {
+    font-size: 15px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+  }
+
+  .error-text {
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  #google-login {
+    transform: scale(0.9) translateX(-5%);
   }
 }
