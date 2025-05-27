@@ -92,7 +92,11 @@ html, body, #root {
 }
 
 .subtitle {
-  display: none;
+  font-family: 'Cascadia Code', monospace;
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 10px;
+  text-align: center;
 }
 
 .form-group {
