@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
-
+import {jwtDecode} from 'jwt-decode';
 const GoogleLoginButton = () => {
   const handleCredentialResponse = async (response) => {
+    
     try {
+      const decoded = jwtDecode(response.credential);
+      const { email, name} = decoded;
+      
       const res = await fetch('http://localhost:5000/api/auth/google-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -13,8 +17,7 @@ const GoogleLoginButton = () => {
       
       if (data.token) {
         localStorage.setItem('token', data.token);
-        console.log(data);
-        localStorage.setItem('username',data.username);
+        localStorage.setItem('name', name);
         window.location.href = '/dashboard';
       } else {
         alert('Google login failed');
