@@ -1,0 +1,133 @@
+.realtime-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+
+    .language-selector {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+    }
+
+    .connected-users {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+
+      .current-user {
+        color: var(--primary-color);
+        font-weight: bold;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .run-btn {
+        background-color: var(--primary-color);
+        color: white;
+
+        &:hover:not(:disabled) {
+          background-color: var(--primary-hover);
+        }
+      }
+
+      .download-btn {
+        background-color: var(--secondary-color);
+        color: white;
+
+        &:hover {
+          background-color: var(--secondary-hover);
+        }
+      }
+    }
+  }
+
+  .typing-indicator {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background-color: var(--notification-bg);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .editor-main {
+    flex: 1;
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 1rem;
+    overflow: hidden;
+
+    .monaco-editor {
+      .margin {
+        background-color: var(--editor-margin-bg) !important;
+      }
+    }
+  }
+
+  .editor-footer {
+    padding: 1rem;
+
+    .output-console {
+      width: 100%;
+      min-height: 150px;
+      padding: 1rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: var(--console-bg);
+      color: var(--text-color);
+      font-family: monospace;
+      resize: vertical;
+      font-size: 0.9rem;
+
+      &::placeholder {
+        color: var(--text-secondary);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

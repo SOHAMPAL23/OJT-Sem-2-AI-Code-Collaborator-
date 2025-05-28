@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
 import { useTheme } from './context/ThemeContext';
-import Compiler from './Compiler/Compiler';
+import RealTimeEditor from './components/Editor/RealTimeEditor/RealTimeEditor';
 import Navbar from './components/Editor/Navbar/Navbar';
 import Tooltip from './components/Editor/Tooltip/Tooltip';
 import RoomModal from './components/Editor/Modals/RoomModal';
-import ProfileModal from './components/Dashboard/Profile/Profile';
+import ProfileModal from './components/Editor/Modals/ProfileModal';
 
 function EditorPage() {
   const [participants, setParticipants] = useState([]);
@@ -56,7 +56,7 @@ function EditorPage() {
 
   const handleNewFileNameChange = (value) => {
     setNewFileName(value);
-    setError(''); // Clear error when user starts typing
+    setError('');
   };
 
   const handleDeleteFile = (fileId) => {
@@ -134,7 +134,11 @@ function EditorPage() {
 
         <div className="workspace">
           <div className="code-editor">
-            <Compiler darkMode={isDarkTheme} roomId={roomId} />
+            <RealTimeEditor
+              roomId={roomId}
+              userName={currentUser.name}
+              darkMode={isDarkTheme}
+            />
           </div>
         </div>
       </div>
@@ -142,12 +146,14 @@ function EditorPage() {
       {showRoomModal && (
         <RoomModal
           onClose={() => setShowRoomModal(false)}
+          onJoinRoom={(id) => setRoomId(id)}
         />
       )}
 
       {showProfileModal && (
         <ProfileModal
           onClose={() => setShowProfileModal(false)}
+          onUpdateUser={(user) => setCurrentUser(prev => ({ ...prev, ...user }))}
         />
       )}
     </div>

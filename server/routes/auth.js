@@ -95,68 +95,44 @@ router.post('/verify-code', async (req, res) => {
 });
 
 router.post('/google-login', async (req, res) => {
-  const { credential } = req.body;
-
   try {
-    const decodedToken = jwt.decode(credential);
-    if (!decodedToken) {
-      throw new Error('Invalid token');
+    const { credential } = req.body;
+    
+    if (!credential) {
+      return res.status(400).json({ message: 'Token is required' });
     }
 
-    const { email, picture, name } = decodedToken;
-    console.log('Google user data:', { email, name });
-
-    try {
-      await client.verifyIdToken({
-        idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID,
-        clockTolerance: 300,
-      });
-    } catch (verifyError) {
-      console.error('Token verification error:', verifyError);
-    }
-
-    let user = await User.findOne({ email });
-    if (!user) {
-      // Generate a unique usergeneratedname
-      let usergeneratedname = generateRandomUsername();
-      while (await User.findOne({ usergeneratedname })) {
-        usergeneratedname = generateRandomUsername();
-      }
-
-      // Use Google's name as username, or generate one if not available
-      const username = name || generateRandomUsername();
-
-      console.log('Creating new user with:', { username, usergeneratedname, email });
-
-      user = new User({ 
-        username,
-        usergeneratedname,
-        email, 
-        profilePicture: picture,
-        authProvider: 'google',
-        isVerified: true
-      });
-      await user.save();
-    }
-
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID
     });
 
-    res.json({ 
-      token, 
-      user: { 
-        username: user.username,
-        usergeneratedname: user.usergeneratedname,
-        email: user.email,
-        profilePicture: user.profilePicture,
-        authProvider: user.authProvider
-      } 
+    const payload = ticket.getPayload();
+    
+    // Here you would typically:
+    // 1. Check if user exists in your database
+    // 2. Create user if they don't exist
+    // 3. Generate a session token
+    
+    const user = {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name,
+      picture: payload.picture,
+      // Add any other user data you want to store
+    };
+
+    // For now, we'll just send back the user data
+    res.json({
+      user,
+      message: 'Successfully authenticated'
     });
-  } catch (err) {
-    console.error('Google login error:', err);
-    res.status(401).json({ msg: 'Google authentication failed' });
+  } catch (error) {
+    console.error('Google authentication error:', error);
+    res.status(401).json({
+      message: 'Authentication failed',
+      error: error.message
+    });
   }
 });
 
@@ -400,7 +376,5 @@ router.put('/profile', auth, async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
-
-
 
 module.exports = router;

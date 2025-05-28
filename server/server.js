@@ -1,74 +1,204 @@
+require('dotenv').config();
 const express = require('express');
-const connectDB = require('./config/db');
 const http = require('http');
-const cors = require('cors');
 const { Server } = require('socket.io');
-const app = express();
-const dotenv = require('dotenv');
+const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
+const auth = require('./routes/auth');
 
+const app = express();
 const server = http.createServer(app);
+
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  preflightContinue: false
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Socket.io setup with CORS
 const io = new Server(server, {
-  cors: { origin: '*' }
+  cors: corsOptions,
+  pingTimeout: 60000
 });
 
-dotenv.config();
-connectDB();
-
-// Configure CORS
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+// Pre-flight requests
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
-// Mount routes
-app.use('/api', require('./routes/compiler'));
-app.use('/api/auth', require('./routes/auth'));
+// Mount auth routes
+app.use('/api/auth', auth);
 
+// Store room data
+const rooms = new Map();
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ msg: 'Something broke!' });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ msg: 'Route not found' });
-});
-
-
-// Socket.io logic
+// Socket.io connection handling
 io.on('connection', (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  console.log('User Connected:', socket.id);
 
-  // Join a room
-  socket.on("join-room", (roomId) => {
+  // Handle joining a room
+  socket.on('join', ({ roomId, userName }) => {
     socket.join(roomId);
-    socket.roomId = roomId;
-    console.log(`${socket.id} joined room ${roomId}`);
+    
+    // Initialize room if it doesn't exist
+    if (!rooms.has(roomId)) {
+      rooms.set(roomId, {
+        users: new Map(),
+        code: '',
+        language: 'javascript'
+      });
+    }
+
+    // Add user to room
+    const room = rooms.get(roomId);
+    room.users.set(socket.id, userName);
+
+    // Notify others in the room
+    io.to(roomId).emit('userNotification', {
+      type: 'join',
+      user: userName
+    });
+
+    // Send room info to all users
+    io.to(roomId).emit('roomInfo', {
+      users: Array.from(room.users.values()),
+      activity: `${userName} joined`
+    });
+
+    // Send current code and language to the new user
+    socket.emit('codeUpdate', room.code);
+    socket.emit('languageUpdate', room.language);
   });
 
-  // Chat message
-  socket.on("send-message", ({ roomId, message }) => {
-    socket.to(roomId).emit("receive-message", {
-      sender: socket.id,
-      message
+  // Handle code changes
+  socket.on('codeChange', ({ roomId, code }) => {
+    const room = rooms.get(roomId);
+    if (room) {
+      room.code = code;
+      socket.to(roomId).emit('codeUpdate', code);
+    }
+  });
+
+  // Handle language changes
+  socket.on('languageChange', ({ roomId, language }) => {
+    const room = rooms.get(roomId);
+    if (room) {
+      room.language = language;
+      socket.to(roomId).emit('languageUpdate', language);
+    }
+  });
+
+  // Handle typing indicators
+  socket.on('typing', ({ roomId, userName }) => {
+    socket.to(roomId).emit('userTyping', userName);
+  });
+
+  // Handle code execution
+  socket.on('compileCode', async ({ code, roomId, language }) => {
+    try {
+      // Here you would integrate with your code execution service
+      // For now, we'll just echo back the code
+      const response = {
+        run: {
+          output: `Code execution not implemented yet.\nReceived ${language} code:\n${code}`,
+          stderr: null
+        }
+      };
+      
+      io.to(roomId).emit('codeResponse', response);
+    } catch (error) {
+      socket.emit('error', { message: 'Code execution failed' });
+    }
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('User Disconnected:', socket.id);
+    
+    // Find and clean up user from all rooms
+    rooms.forEach((room, roomId) => {
+      if (room.users.has(socket.id)) {
+        const userName = room.users.get(socket.id);
+        room.users.delete(socket.id);
+        
+        // Notify others in the room
+        io.to(roomId).emit('userNotification', {
+          type: 'leave',
+          user: userName
+        });
+        
+        // Update room info
+        io.to(roomId).emit('roomInfo', {
+          users: Array.from(room.users.values()),
+          activity: `${userName} left`
+        });
+        
+        // Clean up empty rooms
+        if (room.users.size === 0) {
+          rooms.delete(roomId);
+        }
+      }
     });
   });
-  
-  // Code change (live collaboration)
-  socket.on("code-change", ({ roomId, code }) => {
-    socket.to(roomId).emit("receive-code", code);
-  });
 
-  socket.on("disconnect", () => {
-    console.log(`User disconnected: ${socket.id}`);
+  // Handle explicit leave room
+  socket.on('leaveRoom', () => {
+    rooms.forEach((room, roomId) => {
+      if (room.users.has(socket.id)) {
+        const userName = room.users.get(socket.id);
+        room.users.delete(socket.id);
+        socket.leave(roomId);
+        
+        // Notify others
+        io.to(roomId).emit('userNotification', {
+          type: 'leave',
+          user: userName
+        });
+        
+        io.to(roomId).emit('roomInfo', {
+          users: Array.from(room.users.values()),
+          activity: `${userName} left`
+        });
+        
+        if (room.users.size === 0) {
+          rooms.delete(roomId);
+        }
+      }
+    });
   });
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString() });
+});
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Create room endpoint
+app.post('/api/room', (req, res) => {
+  const roomId = uuidv4();
+  rooms.set(roomId, {
+    users: new Map(),
+    code: '',
+    language: 'javascript'
+  });
+  res.json({ roomId });
+});
+
+const PORT = process.env.PORT || 3001;
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server time: ${new Date().toISOString()}`);
+  console.log(`CORS enabled for origins:`, corsOptions.origin);
+});
