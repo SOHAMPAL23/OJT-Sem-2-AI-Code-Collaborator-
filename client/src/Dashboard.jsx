@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from './components/Dashboard/Header/Header';
 import MainContent from './components/Dashboard/Content/MainContent';
 import Features from './components/Dashboard/Features/Features';
-import Profile from './components/Dashboard/Profile/Profile';
+import ProfileModel from './components/Dashboard/Profile/Profile';
 import Footer from './components/Dashboard/Footer/Footer';
 import SettingsModal from './components/Dashboard/Modals/SettingsModal';
 
@@ -92,6 +92,12 @@ function DashboardPage() {
     navigate('/');
   };
 
+  const handleProfileSave = (updatedData) => {
+  console.log('Updated profile:', updatedData);
+  // You can also update parent state or show a message etc.
+};
+
+
   // Menu toggle handler
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -117,11 +123,13 @@ function DashboardPage() {
       <MainContent />
       <Features />
       
-      <Profile
-        profileData={profileData}
+      <ProfileModel
         isEditing={isEditing}
-        handleProfileChange={handleProfileChange}
-        handleProfileEdit={handleProfileEdit}
+        onEdit={handleProfileEdit}
+        onSave={handleProfileSave}
+        onClose={() => setIsEditing(false)}
+        profileData={profileData}
+        onChange={handleProfileChange}
       />
 
       <Footer />
