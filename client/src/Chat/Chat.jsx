@@ -16,31 +16,61 @@ const Chat = ({ darkMode }) => {
   const [modalOpen, setModalOpen] = useState(true);
   const [joinExisting, setJoinExisting] = useState(false);
 
-useEffect(() => {
-  const savedJoined = localStorage.getItem('joined');
-  const savedRoomId = localStorage.getItem('roomId');
+  const initializeSocket=()=>{
+    const savedJoined = localStorage.getItem('joined');
+    const savedRoomId = localStorage.getItem('roomId');
 
-  if (savedJoined === 'true' && savedRoomId) {
-    setJoined(true);
-    setRoomId(savedRoomId);
-    setModalOpen(false);
-    socketRef.current = io('http://localhost:5000');
-    socketRef.current.emit('join-room', savedRoomId);
+    if (savedJoined === 'true' && savedRoomId) {
+      setJoined(true);
+      setRoomId(savedRoomId);
+      setModalOpen(false);
+      socketRef.current = io('http://localhost:5000');
+      socketRef.current.emit('join-room', savedRoomId);
 
-    socketRef.current.on('receive-message', ({ sender, message }) => {
-      setChat(prev => [...prev, { sender, message }]);
-    });
-  } else {
-    socketRef.current = io('http://localhost:5000');
-    socketRef.current.on('receive-message', ({ sender, message }) => {
-      setChat(prev => [...prev, { sender, message }]);
-    });
+      socketRef.current.on('receive-message', ({ sender, message }) => {
+        setChat(prev => [...prev, { sender, message }]);
+      });
+    } else {
+      socketRef.current = io('http://localhost:5000');
+      socketRef.current.on('receive-message', ({ sender, message }) => {
+        setChat(prev => [...prev, { sender, message }]);
+      });
+    }
+
+    return () => {
+      socketRef.current.disconnect();
+    };
   }
 
-  return () => {
-    socketRef.current.disconnect();
-  };
+useEffect(() => {
+  const cleanup = initializeSocket();
+  return cleanup;
 }, []);
+
+const [username, setUsername] = useState('Anonymous');
+
+useEffect(() => {
+  const fetchUsername = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const res = await fetch('http://localhost:5000/api/auth/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setUsername(data.usergeneratedname || 'Anonymous');
+    } catch (err) {
+      console.error('Failed to fetch profile:', err);
+    }
+  };
+
+  fetchUsername();
+}, []);
+
 
   const handleCreateRoom = () => {
     const newRoomId = generateRoomId();
@@ -72,7 +102,7 @@ useEffect(() => {
 
   const sendMessage = () => {
     if (message !== '') {
-      socketRef.current.emit('send-message', { roomId, message });
+      socketRef.current.emit('send-message', { roomId, message, sender: username });
       setChat(prev => [...prev, { sender: 'You', message }]);
       setMessage('');
     }

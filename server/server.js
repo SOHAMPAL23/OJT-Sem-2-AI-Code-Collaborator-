@@ -52,9 +52,9 @@ io.on('connection', (socket) => {
   });
 
   // Chat message
-  socket.on("send-message", ({ roomId, message }) => {
+  socket.on("send-message", ({ roomId, message, sender }) => {
     socket.to(roomId).emit("receive-message", {
-      sender: socket.id,
+      sender,
       message
     });
   });
