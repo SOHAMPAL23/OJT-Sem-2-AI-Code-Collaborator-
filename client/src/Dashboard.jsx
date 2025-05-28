@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import mainImage from './assets/Your paragraph text.png';
 import { useNavigate } from 'react-router-dom';
+import Header from './components/Dashboard/Header/Header';
+import MainContent from './components/Dashboard/Content/MainContent';
+import Features from './components/Dashboard/Features/Features';
+import ProfileModel from './components/Dashboard/Profile/Profile';
+import Footer from './components/Dashboard/Footer/Footer';
+import SettingsModal from './components/Dashboard/Modals/SettingsModal';
 
 function DashboardPage() {
-  // State management
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [settings, setSettings] = useState({
     theme: localStorage.getItem('theme') || 'dark',
     notifications: localStorage.getItem('notifications') !== 'false'
   });
-  const navigate = useNavigate();
-
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [profileData, setProfileData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
   // Apply theme effect
   useEffect(() => {
@@ -73,12 +76,7 @@ function DashboardPage() {
 
   // Profile handlers
   const handleProfileEdit = () => {
-    if (isEditing) {
-      setIsEditing(false);
-      showNotification('Profile updated successfully!');
-    } else {
-      setIsEditing(true);
-    }
+    setIsEditing(!isEditing);
   };
 
   const handleProfileChange = (e) => {
@@ -89,240 +87,51 @@ function DashboardPage() {
     }));
   };
 
-  const navigateEditorPage = () => {
-    navigate('/editor')
-  }
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
 
-  // Add menu toggle handler
+  const handleProfileSave = (updatedData) => {
+  console.log('Updated profile:', updatedData);
+};
+
+
+  // Menu toggle handler
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <div className='main-head-container'>
-        <div id="header">
-          <div className="logo">
-            <h1 className="logo-Code">Code</h1>
-            <h1 className="logo-Crux">Crux</h1>
-          </div>
-          
-          {/* Add hamburger menu button */}
-          <button className="menu-toggle" onClick={toggleMenu}>
-            <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-          </button>
+      <Header 
+        isMenuOpen={isMenuOpen}
+        toggleMenu={toggleMenu}
+        handleSettingsOpen={handleSettingsOpen}
+      />
 
-          {/* Add isMenuOpen class to nav-links */}
-          <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-            <a href="#first-content" onClick={() => setIsMenuOpen(false)}>Home</a>
-            <a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a>
-            <a href="#profile-section" onClick={() => setIsMenuOpen(false)}>Profile</a>
-            <a href="#footer" onClick={() => setIsMenuOpen(false)}>About us</a>
-          </div>
-          
-          <div className="header-buttons">
-            <button className="code-Editor" onClick={navigateEditorPage}>Code Editor</button>
-            <button className="setting" onClick={handleSettingsOpen}>Setting</button>
-          </div>
-        </div>
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={handleSettingsClose}
+        settings={settings}
+        onThemeChange={handleThemeChange}
+        onNotificationToggle={handleNotificationToggle}
+        onLogout={handleLogout}
+      />
 
-        {isSettingsOpen && (
-          <>
-            <div className="settings-modal" id="settingsModal">
-              <div className="settings-content">
-                <div className="settings-header">
-                  <h2>Settings</h2>
-                  <button className="close-settings" onClick={handleSettingsClose}>&times;</button>
-                </div>
-                
-                <div className="settings-body">
-                  <div className="settings-section">
-                    <h3>Theme</h3>
-                    <div className="theme-switcher">
-                      <button 
-                        className={`theme-btn ${settings.theme === 'dark' ? 'active' : ''}`}
-                        onClick={() => handleThemeChange('dark')}
-                      >
-                        <i className="fas fa-moon"></i> Dark
-                      </button>
-                      <button 
-                        className={`theme-btn ${settings.theme === 'light' ? 'active' : ''}`}
-                        onClick={() => handleThemeChange('light')}
-                      >
-                        <i className="fas fa-sun"></i> Light
-                      </button>
-                    </div>
-                  </div>
+      <MainContent />
+      <Features />
+      
+      <ProfileModel
+        isEditing={isEditing}
+        onEdit={handleProfileEdit}
+        onSave={handleProfileSave}
+        onClose={() => setIsEditing(false)}
+        profileData={profileData}
+        onChange={handleProfileChange}
+      />
 
-                  <div className="settings-section">
-                    <h3>Notifications</h3>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={settings.notifications}
-                        onChange={(e) => handleNotificationToggle(e.target.checked)}
-                      />
-                      <span className="toggle-slider"></span>
-                      <span className="toggle-label">Enable Notifications</span>
-                    </label>
-                  </div>
-
-                  <div className="logout-section">
-                    <button className="logout-btn" onClick={handleLogout}>
-                      <i className="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="overlay" onClick={handleSettingsClose}></div>
-          </>
-        )}
-
-        <div className="main-content" id='first-content'>
-          <img src={mainImage} alt="code-crux" className="main-image" />
-        </div>
-
-      <div className="info-box">
-        <h1 className="line1">Welcome to Code Crux </h1>
-        <h1 className="line2">Code Crux lets developers collaborate in real-time with powerful editing tools</h1>
-        <h1 className="line3">Create private rooms, join public ones, and build amazing code together seamlessly</h1>
-      </div>
-
-      <div id="features">
-        <div className="features-headline">
-          <h2 className="features-title">Features </h2>
-          <h2 className="features-subtitle">We Provide</h2>
-        </div>
-
-        <div className="feature-box-container">
-          <div className="feature-box1">
-            <h3>Pair Programming</h3>
-            <p>With integrated debugging tools, developers can collaborate to identify and fix issues in the codebase in real time. This feature allows teams to collaborate to debug together, share insights, and see the results of their changes instantly. Developers can also run tests, analyze outputs, and troubleshoot errors with ease, ensuring smoother development cycles. Additionally, pair programming, a practice where two developers work together on the same problem, is facilitated directly within the platform. One developer writes code while the other reviews it, making the process more efficient and reducing the chances of bugs.</p>
-          </div>
-
-          <div className="feature-box2">
-            <h3>Real-Time Collaborative </h3>
-            <p>This feature allows multiple developers to work on the same file or project simultaneously, with instant updates visible to all users. As each person types or modifies the code, everyone in the collaboration session sees the changes in real time. This eliminates the need for manually syncing changes, dramatically speeding up teamwork. Whether you're building a new feature or troubleshooting a bug, real-time collaborative editing ensures that all contributors are always working with the most current version of the code. It also eliminates the confusion and delays often caused by separate work sessions.</p>
-          </div>
-
-          <div className="feature-box1">
-            <h3>File History & Code Export</h3>
-            <p>The file tracking feature allows users to efficiently manage and download their project files in a compressed ZIP format, making it easier to share or back up their work. This feature enables developers to package their entire codebase, including all files, configurations, and assets, into a single ZIP file, which can be easily shared with teammates or transferred to other systems. By downloading the project as a ZIP, developers avoid the hassle of downloading files individually, saving time and ensuring that the entire project is bundled in one neatly compressed file.</p>
-          </div>
-        </div>
-      </div>
-
-      <div id="profile-section">
-        <div className="profile-container">
-          <h2 className="profile-title">Profile</h2>
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={profileData.username}
-              onChange={handleProfileChange}
-              placeholder="Enter your username"
-              readOnly={!isEditing}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="languages">Expertise Languages</label>
-            <input
-              type="text"
-              id="languages"
-              name="languages"
-              value={profileData.languages}
-              onChange={handleProfileChange}
-              placeholder="e.g., JavaScript, Python, Java, C++"
-              readOnly={!isEditing}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="field">Expertise Field</label>
-            <input
-              type="text"
-              id="field"
-              name="field"
-              value={profileData.field}
-              onChange={handleProfileChange}
-              placeholder="e.g., Frontend Development, Backend Development"
-              readOnly={!isEditing}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="experience">Experience (years)</label>
-            <input
-              type="number"
-              id="experience"
-              name="experience"
-              value={profileData.experience}
-              onChange={handleProfileChange}
-              placeholder="Years of experience"
-              readOnly={!isEditing}
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="bio">Bio</label>
-            <textarea
-              id="bio"
-              name="bio"
-              value={profileData.bio}
-              onChange={handleProfileChange}
-              placeholder="Tell us about yourself, your journey, and your passion for coding..."
-              rows="5"
-              readOnly={!isEditing}
-            />
-          </div>
-
-          <button className="edit-profile" onClick={handleProfileEdit}>
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </button>
-        </div>
-      </div>
-
-      <footer id="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3>About Code Crux</h3>
-            <p>Code Crux is a collaborative coding platform designed to make programming accessible and enjoyable. We provide real-time collaboration tools, helping developers work together seamlessly from anywhere in the world.</p>
-          </div>
-
-          <div className="footer-section">
-            <h3>Contact & Support</h3>
-            <ul>
-              <li><i className="far fa-envelope"></i> support@codecrux.com</li>
-              <li><i className="far fa-clock"></i> 24/7 Technical Support</li>
-              <li><i className="far fa-comment"></i> Live Chat Available</li>
-              <li><i className="far fa-question-circle"></i> FAQ & Help Center</li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h3>Connect With Us</h3>
-            <div className="social-links">
-              <a href="https://github.com/SOHAMPAL23/OJT-Sem-2-AI-Code-Collaborator-" className="social-link">
-                <i className="fab fa-github"></i>
-              </a>
-              <a href="#" className="social-link"><i className="fab fa-linkedin"></i></a>
-              <a href="#" className="social-link"><i className="fab fa-twitter"></i></a>
-              <a href="#" className="social-link"><i className="fab fa-discord"></i></a>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>&copy; 2024 Code Crux. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

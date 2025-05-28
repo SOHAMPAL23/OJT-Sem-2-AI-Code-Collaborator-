@@ -1,13 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { signup, login } = require('../controllers/authController');
 const auth = require('../middleware/auth')
 const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { generateVerificationCode, sendVerificationEmail } = require('../utils/emailService');
-
-const bcrypt = require('bcryptjs');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -198,7 +195,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await password == user.password;
     if (!isMatch) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
@@ -276,7 +273,6 @@ router.post('/signup', async (req, res) => {
       usergeneratedname = generateRandomUsername();
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
     const verificationCode = generateVerificationCode();
     const verificationCodeExpires = new Date(Date.now() + 10 * 60 * 1000);
 
@@ -284,7 +280,7 @@ router.post('/signup', async (req, res) => {
       username,
       usergeneratedname,
       email,
-      password: hashedPassword,
+      password,
       verificationCode,
       verificationCodeExpires,
       isVerified: false
