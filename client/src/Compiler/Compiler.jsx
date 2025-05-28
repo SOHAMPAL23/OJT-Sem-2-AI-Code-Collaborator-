@@ -1,20 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import axios from 'axios';
 import MonacoEditor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 import './Compiler.css';
 
-const Compiler = ({ darkMode, roomId }) => {
-  const [code, setCode] = useState(
-    'def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()'
-  );
-  const [output, setOutput] = useState('');
-  const [language, setLanguage] = useState('python');
-  const [stdin, setStdin] = useState('');
-  const [version, setVersion] = useState('3.10.0');
-
-  const codeRef = useRef(code); // Prevent stale closure
+const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersion, setEditorLanguage,setEditorVersion }) => {
+  const codeRef = useRef(code);
   const socketRef = useRef(null);
+  const [output, setOutput] = React.useState('');
+  const [stdin, setStdin] = React.useState('');
+  const [language, setLanguage] = React.useState('python');
+  const [version, setVersion] = React.useState('3.10.0');
 
   const languageVersionMap = {
     python: ['3.10.0'],
@@ -30,42 +26,33 @@ const Compiler = ({ darkMode, roomId }) => {
     java: 'java',
   };
 
-  // Only connect and join socket when roomId is valid
-useEffect(() => {
-  if (!roomId) return;
-  console.log('Connecting socket for room:', roomId);
-  socketRef.current = io('http://localhost:5000');
+  useEffect(() => {
+    if (!roomId) return;
+    socketRef.current = io('http://localhost:5000');
 
-  socketRef.current.on('connect', () => {
-    console.log('Socket connected, id:', socketRef.current.id);
-    socketRef.current.emit('join-room', roomId);
-  });
+    socketRef.current.on('connect', () => {
+      socketRef.current.emit('join-room', roomId);
+    });
 
-  socketRef.current.on('receive-code', (newCode) => {
-    console.log('Received code update:', newCode);
-    if (newCode !== codeRef.current) {
-      setCode(newCode);
-      codeRef.current = newCode;
+    socketRef.current.on('receive-code', (newCode) => {
+      if (newCode !== codeRef.current) {
+        setCode(newCode);
+        codeRef.current = newCode;
+      }
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [roomId]);
+
+  const handleEditorChange = (value) => {
+    setCode(value);
+    codeRef.current = value;
+    if (socketRef.current && roomId) {
+      socketRef.current.emit('code-change', { roomId, code: value });
     }
-  });
-
-  socketRef.current.on('disconnect', () => {
-    console.log('Socket disconnected');
-  });
-
-  return () => {
-    socketRef.current.disconnect();
   };
-}, [roomId]);
-
-const handleEditorChange = (value) => {
-  setCode(value);
-  codeRef.current = value;
-  if (socketRef.current && roomId) {
-    console.log('Emitting code-change:', value);
-    socketRef.current.emit('code-change', { roomId, code: value });
-  }
-};
 
   const runCode = async () => {
     try {
@@ -77,25 +64,23 @@ const handleEditorChange = (value) => {
       });
       setOutput(res.data.run?.output || res.data.output || 'No output');
     } catch (err) {
-      console.error('Compilation error:', err.response?.data || err.message);
       setOutput('Error running code');
     }
   };
 
   const loadBoilerplate = (lang) => {
-    if (lang === 'python') {
-      return `def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()`;
+    switch (lang) {
+      case 'python':
+        return `def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()`;
+      case 'javascript':
+        return `function main() {\n  console.log("Hello, World!");\n}\n\nmain();`;
+      case 'java':
+        return `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}`;
+      case 'cpp':
+        return `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}`;
+      default:
+        return '';
     }
-    if (lang === 'javascript') {
-      return `function main() {\n  console.log("Hello, World!");\n}\n\nmain();`;
-    }
-    if (lang === 'java') {
-      return `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}`;
-    }
-    if (lang === 'cpp') {
-      return `#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}`;
-    }
-    return '';
   };
 
   return (
@@ -109,8 +94,8 @@ const handleEditorChange = (value) => {
           const boilerplate = loadBoilerplate(lang);
           setCode(boilerplate);
           codeRef.current = boilerplate;
-  
-          if (socketRef.current && roomId && roomId.trim() !== '') {
+
+          if (socketRef.current && roomId?.trim()) {
             socketRef.current.emit('code-change', { roomId, code: boilerplate });
           }
         }}
@@ -120,9 +105,8 @@ const handleEditorChange = (value) => {
         <option value="cpp">C++</option>
         <option value="java">Java</option>
       </select>
-
-      <br />
-      <br />
+      <button onClick={runCode}>Run Code</button>
+      <br /><br />
 
       <MonacoEditor
         height="500px"
@@ -135,10 +119,10 @@ const handleEditorChange = (value) => {
           minimap: { enabled: false },
           wordWrap: 'on',
         }}
+        
       />
 
-      <br />
-      <br />
+      <br /><br />
       <textarea
         rows="3"
         cols="80"
@@ -146,9 +130,8 @@ const handleEditorChange = (value) => {
         value={stdin}
         onChange={(e) => setStdin(e.target.value)}
       />
-      <br />
-      <br />
-      <button onClick={runCode}>Run Code</button>
+      <br /><br />
+      
       <h3>Output:</h3>
       <pre>{output}</pre>
     </div>

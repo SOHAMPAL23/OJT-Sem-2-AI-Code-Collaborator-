@@ -1381,6 +1381,12 @@ body.dark-theme .role-option:hover {
   font-size: 1.2rem;
 }
 
+.file-item.active {
+  background-color: #00ffdd;
+  color: white;
+  font-weight: bold;
+}
+
 /* Dark Theme Variables */
 .dark-theme {
   --bg-color: #1a1b1e;
