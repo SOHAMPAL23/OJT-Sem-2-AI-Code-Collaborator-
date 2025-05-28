@@ -94,7 +94,6 @@ function DashboardPage() {
 
   const handleProfileSave = (updatedData) => {
   console.log('Updated profile:', updatedData);
-  // You can also update parent state or show a message etc.
 };
 
 
