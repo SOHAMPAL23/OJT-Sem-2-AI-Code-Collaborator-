@@ -39,11 +39,28 @@ function EditorPage() {
 
   const [roomId, setRoomId] = useState('');
 
+  const allowedExtensions = ['.py', '.js', '.java', '.cpp'];
   const handleCreateFile = () => {
     if (!newFileName.trim()) {
       setError('File name cannot be empty');
       return;
     }
+
+    //If no extension provided, default to .py
+    let fileName=newFileName.trim();
+    if(!fileName.includes('.')){
+      fileName+='.py';
+    }
+    
+    //Extract and validate extension
+    const ext=fileName.slice(fileName.lastIndexOf('.'))
+
+    if(!allowedExtensions.includes(ext)){
+       setError('Only .py, .js, .java, or .cpp files are allowed');
+      return;
+    }
+
+    //check for duplicate
     if (files.some(f => f.name === newFileName)) {
       setError('File with this name already exists');
       return;
