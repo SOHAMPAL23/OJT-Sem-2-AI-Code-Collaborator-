@@ -45,6 +45,7 @@ router.post('/request-verification', async (req, res) => {
       await User.deleteOne({ email });
       return res.status(500).json({ msg: 'Failed to send verification email' });
     }
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
     res.json({ msg: 'Verification code sent to your email' });
   } catch (err) {
@@ -52,6 +53,7 @@ router.post('/request-verification', async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
 
 // Verify code and complete registration
 router.post('/verify-code', async (req, res) => {
@@ -83,6 +85,7 @@ router.post('/verify-code', async (req, res) => {
     res.json({ 
       token,
       user: {
+
         username: user.username,
         email: user.email,
         isVerified: user.isVerified

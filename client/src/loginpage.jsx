@@ -15,7 +15,8 @@ const Loginpage = () => {
           const decoded = jwtDecode(token);
           const isExpired = decoded.exp * 1000 < Date.now();
           if (!isExpired) {
-            navigate('/dashboard');
+            // navigate('/dashboard');
+            navigate('/login')
           } else {
             localStorage.removeItem('token');
           }

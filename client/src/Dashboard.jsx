@@ -48,7 +48,7 @@ function DashboardPage() {
       setTimeout(() => {
         document.body.removeChild(notification);
       }, 300);
-    }, 3000);
+    }, 3001);
   };
 
   // Settings handlers

@@ -5,7 +5,7 @@ import RealTimeEditor from './components/Editor/RealTimeEditor/RealTimeEditor';
 import Navbar from './components/Editor/Navbar/Navbar';
 import Tooltip from './components/Editor/Tooltip/Tooltip';
 import RoomModal from './components/Editor/Modals/RoomModal';
-import ProfileModal from './components/Editor/Modals/ProfileModal';
+// import ProfileModal from './components/Editor/Modals/ProfileModal'; // This import is commented out, ensure it's handled if used elsewhere
 
 function EditorPage() {
   const [participants, setParticipants] = useState([]);
@@ -23,7 +23,7 @@ function EditorPage() {
   const [renameValue, setRenameValue] = useState('');
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showFilesPanel, setShowFilesPanel] = useState(false);
-  const [showChatPanel, setShowChatPanel] = useState(false);
+  const [showChatPanel, setShowChatPanel] = useState(false); // This state is no longer directly controlling chat panel visibility in RealTimeEditor
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   const [showParticipantsPanel, setShowParticipantsPanel] = useState(false);
   const [settings, setSettings] = useState({
@@ -37,7 +37,8 @@ function EditorPage() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const { isDarkTheme, toggleTheme } = useTheme();
 
-  const [roomId, setRoomId] = useState('');
+  // roomId state is no longer needed here as RealTimeEditor manages it internally
+  // const [roomId, setRoomId] = useState('');
 
   const handleCreateFile = () => {
     if (!newFileName.trim()) {
@@ -105,7 +106,7 @@ function EditorPage() {
         <div className="toolkit">
           <Tooltip
             showFilesPanel={showFilesPanel}
-            showChatPanel={showChatPanel}
+            showChatPanel={showChatPanel} // This will now only control Tooltip's internal state, not RealTimeEditor's chat visibility
             showSettingsPanel={showSettingsPanel}
             showParticipantsPanel={showParticipantsPanel}
             onShowFilesPanel={setShowFilesPanel}
@@ -128,28 +129,32 @@ function EditorPage() {
             onRoleChange={handleRoleChange}
             isDarkTheme={isDarkTheme}
             toggleTheme={toggleTheme}
-            roomId={roomId}
+            // roomId is no longer needed here
+            // roomId={roomId}
           />
         </div>
 
         <div className="workspace">
           <div className="code-editor">
+            {/* REMOVED roomId and userName props */}
             <RealTimeEditor
-              roomId={roomId}
-              userName={currentUser.name}
               darkMode={isDarkTheme}
             />
           </div>
         </div>
       </div>
 
+      {/* RoomModal is now redundant if RealTimeEditor handles room joining directly */}
+      {/* You might want to remove RoomModal and its related state/handlers if not used */}
       {showRoomModal && (
         <RoomModal
           onClose={() => setShowRoomModal(false)}
-          onJoinRoom={(id) => setRoomId(id)}
+          // onJoinRoom is no longer needed here as RealTimeEditor handles its own room state
+          // onJoinRoom={(id) => setRoomId(id)}
         />
       )}
 
+      {/* ProfileModal remains as it's separate */}
       {showProfileModal && (
         <ProfileModal
           onClose={() => setShowProfileModal(false)}

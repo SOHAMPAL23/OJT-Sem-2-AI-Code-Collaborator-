@@ -19,7 +19,7 @@ const GoogleLoginButton = ({ onSuccess, onError }) => {
     const initializeGoogleSignIn = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
-          client_id: "454613848457-l15i54840fb0b9356ca9f4ifqjvuqab7.apps.googleusercontent.com",
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse,
           auto_select: false,
           cancel_on_tap_outside: true,
