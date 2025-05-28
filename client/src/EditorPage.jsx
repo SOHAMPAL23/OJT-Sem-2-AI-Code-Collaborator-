@@ -5,7 +5,7 @@ import Compiler from './Compiler/Compiler';
 import Navbar from './components/Editor/Navbar/Navbar';
 import Tooltip from './components/Editor/Tooltip/Tooltip';
 import RoomModal from './components/Editor/Modals/RoomModal';
-import ProfileModal from './components/Editor/Modals/ProfileModal';
+import ProfileModal from './components/Dashboard/Profile/Profile';
 
 function EditorPage() {
   const [participants, setParticipants] = useState([]);
