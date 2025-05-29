@@ -91,10 +91,10 @@ body.modal-open {
 }
 
 /* Dark theme specific styles */
-body:not(.light-theme) .logo-Code,
+/* body:not(.light-theme) .logo-Code,
 body:not(.light-theme) .logo-Crux {
   color: #3f8cda;
-}
+} */
 
 /* Light theme specific styles */
 .light-theme .logo-Code,
@@ -813,6 +813,7 @@ body:not(.light-theme) .logo-Crux {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .footer-section ul li {
@@ -822,14 +823,8 @@ body:not(.light-theme) .logo-Crux {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
   justify-content: center;
-  text-align: center;
-}
-
-.footer-section ul li i {
-  color: #3f8cda;
-  font-size: 16px;
+  width: 100%;
 }
 
 .footer-section ul li a {
@@ -839,6 +834,16 @@ body:not(.light-theme) .logo-Crux {
   align-items: center;
   gap: 10px;
   transition: color 0.3s ease;
+  width: auto;
+  justify-content: center;
+}
+
+.footer-section ul li i {
+  color: #3f8cda;
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  margin-right: 5px;
 }
 
 .footer-section ul li a:hover {
@@ -2351,6 +2356,20 @@ input:checked + .toggle-slider:before {
   .code-Editor {
     margin-right: 10px; /* Add some space between code editor and hamburger */
   }
+}
+
+/* Light theme adjustments for footer */
+.light-theme .footer-section ul li,
+.light-theme .footer-section ul li a {
+  color: #333333;
+}
+
+.light-theme .footer-section ul li a:hover {
+  color: #235d9f;
+}
+
+.light-theme .footer-section ul li i {
+  color: #235d9f;
 }
 
 
