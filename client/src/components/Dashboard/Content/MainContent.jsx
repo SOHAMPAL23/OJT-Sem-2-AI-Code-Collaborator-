@@ -1,10 +1,11 @@
 import React from 'react';
+import { useTheme } from '../../../context/ThemeContext';
 import darkImage from '../../../assets/Your paragraph text.png';
 import lightImage from '../../../assets/lightThemeImage.png';
 
 const MainContent = () => {
-  const isLightTheme = document.body.classList.contains('light-theme');
-  const currentImage = isLightTheme ? lightImage : darkImage;
+  const { theme } = useTheme();
+  const currentImage = theme === 'light' ? lightImage : darkImage;
 
   return (
     <>

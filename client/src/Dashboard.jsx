@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from './context/ThemeContext';
 import Header from './components/Dashboard/Header/Header';
 import MainContent from './components/Dashboard/Content/MainContent';
 import Features from './components/Dashboard/Features/Features';
@@ -11,18 +12,13 @@ import SettingsModal from './components/Dashboard/Modals/SettingsModal';
 function DashboardPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [settings, setSettings] = useState({
-    theme: localStorage.getItem('theme') || 'dark',
     notifications: localStorage.getItem('notifications') !== 'false'
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [profileData, setProfileData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
-
-  // Apply theme effect
-  useEffect(() => {
-    document.body.classList.toggle('light-theme', settings.theme === 'light');
-  }, [settings.theme]);
+  const { theme, toggleTheme } = useTheme();
 
   // Add Font Awesome CSS
   useEffect(() => {
@@ -51,13 +47,6 @@ function DashboardPage() {
         document.body.removeChild(notification);
       }, 300);
     }, 3000);
-  };
-
-  // Settings handlers
-  const handleThemeChange = (theme) => {
-    setSettings(prev => ({ ...prev, theme }));
-    localStorage.setItem('theme', theme);
-    showNotification('Theme updated!');
   };
 
   const handleNotificationToggle = (checked) => {
@@ -95,9 +84,8 @@ function DashboardPage() {
   };
 
   const handleProfileSave = (updatedData) => {
-  console.log('Updated profile:', updatedData);
-};
-
+    console.log('Updated profile:', updatedData);
+  };
 
   // Menu toggle handler
   const toggleMenu = () => {
@@ -115,8 +103,8 @@ function DashboardPage() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={handleSettingsClose}
-        settings={settings}
-        onThemeChange={handleThemeChange}
+        settings={{ ...settings, theme }}
+        onThemeChange={toggleTheme}
         onNotificationToggle={handleNotificationToggle}
         onLogout={handleLogout}
       />
