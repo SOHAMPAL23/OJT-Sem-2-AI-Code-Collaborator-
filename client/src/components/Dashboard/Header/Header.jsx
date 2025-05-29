@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Header = ({ isMenuOpen, toggleMenu, handleSettingsOpen }) => {
   const navigate = useNavigate();
+  const [activeLink, setActiveLink] = useState('home');
 
   const navigateEditorPage = () => {
     navigate('/editor');
   };
 
+  const handleLinkClick = (link) => {
+    setActiveLink(link);
+    toggleMenu(false);
+  };
+  
   return (
     <div id="header">
       <div className="logo">
@@ -20,10 +26,34 @@ const Header = ({ isMenuOpen, toggleMenu, handleSettingsOpen }) => {
       </button>
 
       <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-        <a href="#first-content" onClick={() => toggleMenu(false)}>Home</a>
-        <a href="#features" onClick={() => toggleMenu(false)}>Features</a>
-        <a href="#profile-section" onClick={() => toggleMenu(false)}>Profile</a>
-        <a href="#footer" onClick={() => toggleMenu(false)}>About us</a>
+        <a
+          href="#first-content"
+          onClick={() => handleLinkClick('home')}
+          className={activeLink === 'home' ? 'active' : ''}
+        >
+          Home
+        </a>
+        <a
+          href="#features"
+          onClick={() => handleLinkClick('features')}
+          className={activeLink === 'features' ? 'active' : ''}
+        >
+          Features
+        </a>
+        <a
+          href="#profile-section"
+          onClick={() => handleLinkClick('profile')}
+          className={activeLink === 'profile' ? 'active' : ''}
+        >
+          Profile
+        </a>
+        <a
+          href="#footer"
+          onClick={() => handleLinkClick('about')}
+          className={activeLink === 'about' ? 'active' : ''}
+        >
+          About us
+        </a>
       </div>
       
       <div className="header-buttons">
@@ -34,4 +64,4 @@ const Header = ({ isMenuOpen, toggleMenu, handleSettingsOpen }) => {
   );
 };
 
-export default Header; 
+export default Header;
