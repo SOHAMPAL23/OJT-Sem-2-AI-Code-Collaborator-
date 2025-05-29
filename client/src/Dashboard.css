@@ -87,11 +87,19 @@ body.modal-open {
   font-size: 30px;
   margin: 0;
   white-space: nowrap;
-  color:#235d9f
+  color: #235d9f;
 }
 
-.logo-Crux:hover{
-  color: #ffffff;  /* Slightly lighter blue on hover */
+/* Dark theme specific styles */
+body:not(.light-theme) .logo-Code,
+body:not(.light-theme) .logo-Crux {
+  color: #3f8cda;
+}
+
+/* Light theme specific styles */
+.light-theme .logo-Code,
+.light-theme .logo-Crux {
+  color: #235d9f;
 }
 
 .nav-links {
@@ -106,13 +114,14 @@ body.modal-open {
 .nav-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.2s ease;
+  font-size: 22px;
+  transition: color 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-links a:hover {
   color: #3f8cda;
+  text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
 }
 
 .header-buttons {
@@ -773,6 +782,10 @@ body.modal-open {
 .footer-section {
   flex: 1;
   min-width: 250px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .footer-section h3 {
@@ -781,6 +794,7 @@ body.modal-open {
   font-size: 22px;
   font-weight: 200;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .footer-section p {
@@ -789,12 +803,16 @@ body.modal-open {
   font-size: 14px;
   line-height: 1.6;
   font-weight: 100;
+  text-align: center;
 }
 
 .footer-section ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .footer-section ul li {
@@ -805,6 +823,8 @@ body.modal-open {
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: center;
+  text-align: center;
 }
 
 .footer-section ul li i {
@@ -812,19 +832,46 @@ body.modal-open {
   font-size: 16px;
 }
 
+.footer-section ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: #3f8cda;
+}
+
 .social-links {
   display: flex;
   gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .social-link {
   color: #ffffff;
   font-size: 24px;
-  transition: none !important;
+  background-color: rgba(63, 140, 218, 0.1);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(63, 140, 218, 0.3);
 }
 
 .social-link:hover {
-  color: #3f8cda;
+  color: #ffffff;
+  background-color: #3f8cda;
+  transform: translateY(-2px);
+  border-color: #3f8cda;
 }
 
 .footer-bottom {
@@ -1249,11 +1296,27 @@ input:checked + .toggle-slider:before {
 }
 
 .light-theme .input-group input[type="text"],
+.light-theme .input-group input[type="email"],
 .light-theme .input-group input[type="number"],
 .light-theme .input-group textarea {
   background-color: #ffffff;
   border: 1px solid #235d9f;
   color: #333333;
+}
+
+.light-theme .input-group input[readonly],
+.light-theme .input-group textarea[readonly] {
+  background-color: rgba(35, 93, 159, 0.05);
+  border: 1px solid #235d9f;
+  color: #333333;
+}
+
+.light-theme .input-group input.editable,
+.light-theme .input-group textarea.editable {
+  background-color: #ffffff;
+  border: 1px solid #235d9f;
+  color: #333333;
+  box-shadow: 0 2px 4px rgba(35, 93, 159, 0.1);
 }
 
 .light-theme .edit-profile {
@@ -2118,9 +2181,25 @@ input:checked + .toggle-slider:before {
 }
 
 .light-theme .input-group input[type="text"],
+.light-theme .input-group input[type="email"],
 .light-theme .input-group input[type="number"],
 .light-theme .input-group textarea {
   background-color: #ffffff !important;
+}
+
+.light-theme .input-group input[readonly],
+.light-theme .input-group textarea[readonly] {
+  background-color: rgba(35, 93, 159, 0.05) !important;
+  border: 1px solid #235d9f !important;
+  color: #333333 !important;
+}
+
+.light-theme .input-group input.editable,
+.light-theme .input-group textarea.editable {
+  background-color: #ffffff !important;
+  border: 1px solid #235d9f !important;
+  color: #333333 !important;
+  box-shadow: 0 2px 4px rgba(35, 93, 159, 0.1) !important;
 }
 
 .profile-avatar {
