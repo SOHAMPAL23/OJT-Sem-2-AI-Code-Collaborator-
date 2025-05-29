@@ -49,6 +49,11 @@ function DashboardPage() {
     }, 3000);
   };
 
+  const handleThemeChange = (newTheme) => {
+    toggleTheme();
+    showNotification(`${newTheme === 'light' ? 'Light' : 'Dark'} theme activated!`);
+  };
+
   const handleNotificationToggle = (checked) => {
     setSettings(prev => ({ ...prev, notifications: checked }));
     localStorage.setItem('notifications', checked);
@@ -104,7 +109,7 @@ function DashboardPage() {
         isOpen={isSettingsOpen}
         onClose={handleSettingsClose}
         settings={{ ...settings, theme }}
-        onThemeChange={toggleTheme}
+        onThemeChange={handleThemeChange}
         onNotificationToggle={handleNotificationToggle}
         onLogout={handleLogout}
       />
