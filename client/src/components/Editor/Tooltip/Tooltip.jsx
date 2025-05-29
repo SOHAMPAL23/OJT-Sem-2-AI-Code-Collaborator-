@@ -3,6 +3,7 @@ import Files from './Files';
 import Settings from './Settings';
 import Participants from './Participants';
 import Chat from '../../../Chat/Chat';
+import '../../../EditorPage.css';
 
 const Tooltip = ({
   showFilesPanel,
@@ -38,28 +39,28 @@ const Tooltip = ({
             className="toolkit-btn"
             onClick={() => onShowFilesPanel(true)}
           >
-            <span className="toolkit-icon">📁</span>
+            <span className="toolkit-icon"></span>
             Files
           </button>
           <button 
             className="toolkit-btn"
             onClick={() => onShowChatPanel(true)}
           >
-            <span className="toolkit-icon">🚪</span>
+            <span className="toolkit-icon"></span>
             Room
           </button>
           <button 
             className="toolkit-btn"
             onClick={() => onShowParticipantsPanel(true)}
           >
-            <span className="toolkit-icon">👥</span>
+            <span className="toolkit-icon"></span>
             Participants
           </button>
           <button 
             className="toolkit-btn"
             onClick={() => onShowSettingsPanel(true)}
           >
-            <span className="toolkit-icon">⚙️</span>
+            <span className="toolkit-icon"></span>
             Settings
           </button>
         </div>

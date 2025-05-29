@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import './EditorPage.css';
 import { useTheme } from './context/ThemeContext';
 import Compiler from './Compiler/Compiler';
 import Navbar from './components/Editor/Navbar/Navbar';
@@ -36,7 +36,6 @@ function EditorPage() {
   });
   const [showProfileModal, setShowProfileModal] = useState(false);
   const { isDarkTheme, toggleTheme } = useTheme();
-
   const [roomId, setRoomId] = useState('');
 
   const handleCreateFile = () => {
@@ -56,7 +55,7 @@ function EditorPage() {
 
   const handleNewFileNameChange = (value) => {
     setNewFileName(value);
-    setError(''); // Clear error when user starts typing
+    setError('');
   };
 
   const handleDeleteFile = (fileId) => {
@@ -89,20 +88,20 @@ function EditorPage() {
     if (participantId === currentUser.id) {
       setCurrentUser(prev => ({ ...prev, role: newRole }));
     }
-    setParticipants(prev => 
+    setParticipants(prev =>
       prev.map(p => p.id === participantId ? { ...p, role: newRole } : p)
     );
   };
 
   return (
-    <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
+    <div className={`app-container ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
       <Navbar
         handleRoomClick={() => setShowRoomModal(true)}
         handleProfileClick={() => setShowProfileModal(true)}
       />
 
       <div className="main">
-        <div className="toolkit">
+        <aside className="toolkit">
           <Tooltip
             showFilesPanel={showFilesPanel}
             showChatPanel={showChatPanel}
@@ -130,26 +129,17 @@ function EditorPage() {
             toggleTheme={toggleTheme}
             roomId={roomId}
           />
-        </div>
+        </aside>
 
-        <div className="workspace">
+        <main className="workspace">
           <div className="code-editor">
             <Compiler darkMode={isDarkTheme} roomId={roomId} />
           </div>
-        </div>
+        </main>
       </div>
 
-      {showRoomModal && (
-        <RoomModal
-          onClose={() => setShowRoomModal(false)}
-        />
-      )}
-
-      {showProfileModal && (
-        <ProfileModal
-          onClose={() => setShowProfileModal(false)}
-        />
-      )}
+      {showRoomModal && <RoomModal onClose={() => setShowRoomModal(false)} />}
+      {showProfileModal && <ProfileModal onClose={() => setShowProfileModal(false)} />}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import MonacoEditor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 import './Compiler.css';
 
+
 const Compiler = ({ darkMode, roomId }) => {
   const [code, setCode] = useState(
     'def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()'
@@ -99,7 +100,8 @@ const handleEditorChange = (value) => {
   };
 
   return (
-    <div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
+    < div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
+      <div className="compiler-header">
       <select
         value={language}
         onChange={(e) => {
@@ -121,8 +123,9 @@ const handleEditorChange = (value) => {
         <option value="java">Java</option>
       </select>
 
-      <br />
-      <br />
+      <button onClick={runCode}>Run Code</button>
+      </div>
+      
 
       <MonacoEditor
         height="500px"
@@ -138,19 +141,20 @@ const handleEditorChange = (value) => {
       />
 
       <br />
+      <div className="compiler-input">
+        <input
+          rows="3"
+          cols="80"
+          placeholder="Input (stdin)..."
+          value={stdin}
+          onChange={(e) => setStdin(e.target.value)}
+        />
+      </div>
       <br />
-      <textarea
-        rows="3"
-        cols="80"
-        placeholder="Input (stdin)..."
-        value={stdin}
-        onChange={(e) => setStdin(e.target.value)}
-      />
-      <br />
-      <br />
-      <button onClick={runCode}>Run Code</button>
       <h3>Output:</h3>
+      <div className="compiler-output">
       <pre>{output}</pre>
+      </div>
     </div>
   );
 };

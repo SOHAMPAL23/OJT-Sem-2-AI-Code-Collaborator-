@@ -1,0 +1,424 @@
+/* Base & theme */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #212529;
+  --accent-color: #357;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --toolkit-width: 800px;
+  --compiler-bg: #f8f9fa;
+  --dark-compiler-bg: #1e1e1e;
+}
+
+body.dark-theme {
+  --bg-color: #1a1a2e;
+  --text-color: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --compiler-bg: #1e1e1e;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Main Layout */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-color);
+}
+
+/* Toolkit Section */
+.toolkit {
+  width: var(--toolkit-width);
+  width: 900px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-color);
+  transition: width 0.3s ease;
+  z-index: 10;
+}
+
+.toolkit-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  
+}
+
+.toolkit-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolkit-btn:hover,
+.toolkit-btn.active {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+body.dark-theme .toolkit-btn:hover,
+body.dark-theme .toolkit-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Compiler Section */
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--compiler-bg);
+  position: relative;
+}
+
+.code-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: hidden;
+  background: var(--compiler-bg);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  margin: 1rem 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+body.dark-theme .theme-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.compiler-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.compiler-input input{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  height: 50px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.3s, color 0.3s;
+}
+/* Responsive Design */
+@media (max-width: 1024px) {
+  :root {
+    --toolkit-width: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --toolkit-width: 70px;
+  }
+
+  .toolkit-btn,
+  .theme-btn {
+    font-size: 0.7rem;
+    padding: 0.6rem 0.4rem;
+  }
+
+  .code-editor {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --toolkit-width: 60px;
+  }
+
+  .toolkit-btn,
+  .theme-btn {
+    font-size: 0.65rem;
+    padding: 0.5rem 0.3rem;
+  }
+
+  .code-editor {
+    padding: 0.5rem;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.toolkit {
+  width: 200px; /* default width */
+  min-width: 100px;
+  max-width: 400px;
+  background: rgba(0, 0, 0, 0.05);
+  transition: width 0.2s ease;
+}
+
+body.dark-theme .toolkit {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+/* Resizer Style */
+.resizer {
+  width: 4px;
+  background: var(--border-color);
+  cursor: ew-resize;
+  position: relative;
+  z-index: 10;
+}
+
+.resizer:hover {
+  background: var(--accent-color);
+}
+
+/* Share Button */
+.share-btn {
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.share-btn:hover {
+  background-color: #2d6bb0;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .share-btn {
+    align-self: flex-end;
+  }
+}
+
+/* Header Container: space-between layout */
+.header-container {
+  display: flex;
+  justify-content: space-between; /* logo on left, share button on right */
+  align-items: center;
+  padding: 12px 24px;
+}
+
+/* Make sure share button stays on the far right */
+.share-btn {
+  margin-left: auto; /* pushes share button to far right */
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 10 rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+  width: 200px;
+  height: 60px ;
+}
+
+.share-btn:hover {
+  background: #2d6bb0;
+  transform: translateY(-1px);
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .share-btn {
+    align-self: flex-end; /* stays on the right even in stacked view */
+    margin-left: 0;
+  }
+}
+:root {
+  --base-font-size: 1rem; /* 18px for desktop */
+}
+
+html {
+  font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Body font */
+body {
+  font-size: var(--base-font-size);
+  line-height: 1.5;
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-color);
+  background: var(--bg-color);
+}
+
+/* Headings */
+.logo h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .logo h1 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo h1 {
+    font-size: 1.2rem;
+  }
+}
+
+/* Toolkit and theme buttons */
+.toolkit-btn,
+.theme-btn,
+.share-btn {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .toolkit-btn,
+  .theme-btn,
+  .share-btn {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .toolkit-btn,
+  .theme-btn,
+  .share-btn {
+    font-size: 0.8rem;
+  }
+}
