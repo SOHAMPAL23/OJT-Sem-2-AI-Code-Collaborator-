@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Files = ({ onBack, files, onCreateFile, onRenameFile, onDeleteFile, newFileName, onNewFileNameChange, error, isCreatingFile, setIsCreatingFile }) => {
+const Files = ({ onBack, files, onCreateFile, onRenameFile, onDeleteFile, newFileName, onNewFileNameChange, error, isCreatingFile, setIsCreatingFile, onFileClick, activeFieldId }) => {
   const handleCreateFile = () => {
     onCreateFile(newFileName);
   };
@@ -48,20 +48,28 @@ const Files = ({ onBack, files, onCreateFile, onRenameFile, onDeleteFile, newFil
       {error && <div className="error-message">{error}</div>}
 
       <div className="file-list">
-        {files.map(file => (
-          <div key={file.id} className="file-item">
-            <span>{file.name}</span>
-            <div className="file-actions">
-              <button
-                className="action-btn"
-                onClick={() => onDeleteFile(file.id)}
-              >
-                🗑️
-              </button>
-            </div>
-          </div>
-        ))}
+  {files.map(file => (
+    <div
+      key={file.id}
+      className={`file-item ${file.id === activeFieldId ? '.active' : ''}`}
+      onClick={() => onFileClick(file.id)}                                
+    >
+      <span>{file.name}</span>
+      <div className="file-actions">
+        <button
+          className="action-btn"
+          onClick={(e) => {
+            e.stopPropagation();            
+            onDeleteFile(file.id);
+          }}
+        >
+          🗑️
+        </button>
       </div>
+    </div>
+  ))}
+</div>
+
     </div>
   );
 };

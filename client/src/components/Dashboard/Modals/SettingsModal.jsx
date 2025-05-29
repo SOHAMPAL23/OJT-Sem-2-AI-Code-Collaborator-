@@ -10,6 +10,12 @@ const SettingsModal = ({
 }) => {
   if (!isOpen) return null;
 
+  const handleThemeClick = (newTheme) => {
+    if (newTheme !== settings.theme) {
+      onThemeChange(newTheme);
+    }
+  };
+
   return (
     <>
       <div className="settings-modal" id="settingsModal">
@@ -25,13 +31,13 @@ const SettingsModal = ({
               <div className="theme-switcher">
                 <button 
                   className={`theme-btn ${settings.theme === 'dark' ? 'active' : ''}`}
-                  onClick={() => onThemeChange('dark')}
+                  onClick={() => handleThemeClick('dark')}
                 >
                   <i className="fas fa-moon"></i> Dark
                 </button>
                 <button 
                   className={`theme-btn ${settings.theme === 'light' ? 'active' : ''}`}
-                  onClick={() => onThemeChange('light')}
+                  onClick={() => handleThemeClick('light')}
                 >
                   <i className="fas fa-sun"></i> Light
                 </button>

@@ -52,10 +52,11 @@ io.on('connection', (socket) => {
   });
 
   // Chat message
-  socket.on("send-message", ({ roomId, message }) => {
+  socket.on("send-message", ({ roomId, message, sender ,senderSocketId}) => {
     socket.to(roomId).emit("receive-message", {
-      sender: socket.id,
-      message
+      sender,
+      message,
+      senderSocketId
     });
   });
   

@@ -2,6 +2,7 @@
   "name": "code-collaborator",
   "version": "1.0.0",
   "scripts": {
+    "build": "cd client && npm i && cd .. && cd server && npm i && cd .. && npm i",
     "client": "npm start --prefix client",
     "server": "nodemon server/server.js",
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"green,blue\" \"npm run server\" \"npm run client\""

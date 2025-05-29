@@ -29,7 +29,9 @@ const Tooltip = ({
   participants,
   onRoleChange,
   isDarkTheme,
-  toggleTheme
+  toggleTheme,
+  onFileClick={onFileClick},           
+  activeFileId={activeFileId} 
 }) => {
   if (!showFilesPanel && !showChatPanel && !showSettingsPanel && !showParticipantsPanel) {
     return (
@@ -94,6 +96,8 @@ const Tooltip = ({
           setIsCreatingFile={setIsCreatingFile}
           onRenameFile={onRenameFile}
           onDeleteFile={onDeleteFile}
+          onFileClick={onFileClick}
+          activeFileId={activeFileId}
         />
       )}
 

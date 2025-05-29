@@ -87,11 +87,19 @@ body.modal-open {
   font-size: 30px;
   margin: 0;
   white-space: nowrap;
-  color:#235d9f
+  color: #235d9f;
 }
 
-.logo-Crux:hover{
-  color: #ffffff;  /* Slightly lighter blue on hover */
+/* Dark theme specific styles */
+/* body:not(.light-theme) .logo-Code,
+body:not(.light-theme) .logo-Crux {
+  color: #3f8cda;
+} */
+
+/* Light theme specific styles */
+.light-theme .logo-Code,
+.light-theme .logo-Crux {
+  color: #235d9f;
 }
 
 .nav-links {
@@ -106,13 +114,15 @@ body.modal-open {
 .nav-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.2s ease;
+  font-size: 22px;
+  transition: color 0.3s ease;
   white-space: nowrap;
 }
 
+
 .nav-links a:hover {
   color: #3f8cda;
+  text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
 }
 
 .header-buttons {
@@ -120,6 +130,7 @@ body.modal-open {
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
+  
 }
 
 .menu-toggle {
@@ -429,130 +440,6 @@ body.modal-open {
   color: #3f8cda;
 }
 
-/* .setting{
-  padding: 0.5rem 1.2rem;
-  background-color: transparent;
-  border: 2px solid #4CAF50;
-  
- 
-  color: white;
-
-}
- */
-.code-Editor {
-  background-color: #3f8cda;
-  border: 1px solid #ffffff;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem 1.2rem;
-  height: 40px;
-  text-align: center;
-  font-family: 'Cascadia Code', sans-serif;
-  font-size: 16px;
-  font-weight: 200;
-  min-width: 120px;
-  white-space: nowrap;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.code-Editor:hover {
-  background-color: #2d6bb0;
-}
-
-.setting {
-  background-color: transparent;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem 1.2rem;
-  height: 40px;
-  text-align: center;
-  font-family: 'Cascadia Code', sans-serif;
-  font-size: 16px;
-  font-weight: 100;
-  min-width: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-/* Light theme setting button */
-.light-theme .setting {
-  color: #235d9f;
-}
-
-.light-theme .setting:hover {
-  background-color: rgba(35, 93, 159, 0.1);
-  color: #235d9f;
-}
-
-/* Header Media Queries */
-@media screen and (max-width: 992px) {
-  .header-buttons {
-    gap: 0.5rem;
-  }
-
-  .code-Editor {
-    padding: 0.5rem 0.8rem;
-    font-size: 14px;
-    min-width: 100px;
-  }
-
-  .setting {
-    padding: 0.5rem 0.8rem;
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .header-buttons {
-    gap: 0.4rem;
-  }
-
-  .code-Editor {
-    padding: 0.4rem 0.6rem;
-    font-size: 13px;
-    min-width: 90px;
-  }
-
-  .setting {
-    padding: 0.4rem 0.6rem;
-    font-size: 13px;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  .header-buttons {
-    gap: 0.3rem;
-  }
-
-  .code-Editor {
-    padding: 0.3rem 0.5rem;
-    font-size: 12px;
-    min-width: 85px;
-  }
-
-  .setting {
-    padding: 0.3rem 0.5rem;
-    font-size: 12px;
-  }
-}
-
-@media screen and (max-width: 540px) {
-  .setting {
-    display: none; /* Hide only the settings button */
-  }
-
-  .code-Editor {
-    margin-right: 10px; /* Add some space between code editor and hamburger */
-  }
-}
-
 .main-content {
   margin-top: 80px;
   width: 100%;
@@ -832,24 +719,47 @@ body.modal-open {
 /* Notification styles */
 .notification {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 15px 25px;
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  padding: 8px 16px;
   background-color: #3f8cda;
   color: white;
   border-radius: 6px;
   font-family: 'Cascadia Code', sans-serif;
-  font-size: 16px;
-  box-shadow: none;
-  animation: none;
-  z-index: 1000;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  max-width: 300px;
+  transform: translateY(0);
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  pointer-events: none;
+  margin-top:40%;
 }
 
 .notification.fade-out {
-  animation: none;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
-
+@media screen and (max-width: 576px) {
+  .notification {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+    font-size: 12px;
+    padding: 6px 12px;
+    height: 35px;
+    margin-top: 10%;
+  }
+  
+  .notification.fade-out {
+    transform: translateY(10px);
+  }
+}
 
 /* Footer Styles */
 #footer {
@@ -873,6 +783,10 @@ body.modal-open {
 .footer-section {
   flex: 1;
   min-width: 250px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .footer-section h3 {
@@ -881,6 +795,7 @@ body.modal-open {
   font-size: 22px;
   font-weight: 200;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .footer-section p {
@@ -889,12 +804,17 @@ body.modal-open {
   font-size: 14px;
   line-height: 1.6;
   font-weight: 100;
+  text-align: center;
 }
 
 .footer-section ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .footer-section ul li {
@@ -904,27 +824,60 @@ body.modal-open {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.footer-section ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
   gap: 10px;
+  transition: color 0.3s ease;
+  width: auto;
+  justify-content: center;
 }
 
 .footer-section ul li i {
   color: #3f8cda;
   font-size: 16px;
+  width: 20px;
+  text-align: center;
+  margin-right: 5px;
+}
+
+.footer-section ul li a:hover {
+  color: #3f8cda;
 }
 
 .social-links {
   display: flex;
   gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .social-link {
   color: #ffffff;
   font-size: 24px;
-  transition: none !important;
+  background-color: rgba(63, 140, 218, 0.1);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(63, 140, 218, 0.3);
 }
 
 .social-link:hover {
-  color: #3f8cda;
+  color: #ffffff;
+  background-color: #3f8cda;
+  transform: translateY(-2px);
+  border-color: #3f8cda;
 }
 
 .footer-bottom {
@@ -1349,11 +1302,27 @@ input:checked + .toggle-slider:before {
 }
 
 .light-theme .input-group input[type="text"],
+.light-theme .input-group input[type="email"],
 .light-theme .input-group input[type="number"],
 .light-theme .input-group textarea {
   background-color: #ffffff;
   border: 1px solid #235d9f;
   color: #333333;
+}
+
+.light-theme .input-group input[readonly],
+.light-theme .input-group textarea[readonly] {
+  background-color: rgba(35, 93, 159, 0.05);
+  border: 1px solid #235d9f;
+  color: #333333;
+}
+
+.light-theme .input-group input.editable,
+.light-theme .input-group textarea.editable {
+  background-color: #ffffff;
+  border: 1px solid #235d9f;
+  color: #333333;
+  box-shadow: 0 2px 4px rgba(35, 93, 159, 0.1);
 }
 
 .light-theme .edit-profile {
@@ -1876,12 +1845,14 @@ input:checked + .toggle-slider:before {
 /* Fix for notification on mobile */
 @media screen and (max-width: 576px) {
   .notification {
-    width: 90%;
-    left: 50%;
-    transform: translateX(-50%);
+    width: auto;
+    max-width: 90%;
+    left: auto;
+    transform: none;
     bottom: 10px;
-    font-size: 14px;
-    padding: 10px 15px;
+    right: 10px;
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }
 
@@ -2216,9 +2187,25 @@ input:checked + .toggle-slider:before {
 }
 
 .light-theme .input-group input[type="text"],
+.light-theme .input-group input[type="email"],
 .light-theme .input-group input[type="number"],
 .light-theme .input-group textarea {
   background-color: #ffffff !important;
+}
+
+.light-theme .input-group input[readonly],
+.light-theme .input-group textarea[readonly] {
+  background-color: rgba(35, 93, 159, 0.05) !important;
+  border: 1px solid #235d9f !important;
+  color: #333333 !important;
+}
+
+.light-theme .input-group input.editable,
+.light-theme .input-group textarea.editable {
+  background-color: #ffffff !important;
+  border: 1px solid #235d9f !important;
+  color: #333333 !important;
+  box-shadow: 0 2px 4px rgba(35, 93, 159, 0.1) !important;
 }
 
 .profile-avatar {
@@ -2256,6 +2243,134 @@ input:checked + .toggle-slider:before {
   .main-image {
     height: 50vh;
   }
+}
+
+.code-Editor {
+  background-color: #3f8cda;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem 1.2rem;
+  height: 40px;
+  text-align: center;
+  font-family: 'Cascadia Code', sans-serif;
+  font-size: 16px;
+  font-weight: 200;
+  min-width: 120px;
+  white-space: nowrap;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.code-Editor:hover {
+  background-color: #2d6bb0;
+}
+
+.setting {
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem 1.2rem;
+  height: 40px;
+  text-align: center;
+  font-family: 'Cascadia Code', sans-serif;
+  font-size: 16px;
+  font-weight: 100;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* Light theme setting button */
+.light-theme .setting {
+  color: #235d9f;
+}
+
+.light-theme .setting:hover {
+  background-color: rgba(35, 93, 159, 0.1);
+  color: #235d9f;
+}
+
+/* Header Media Queries */
+@media screen and (max-width: 992px) {
+  .header-buttons {
+    gap: 0.5rem;
+  }
+
+  .code-Editor {
+    padding: 0.5rem 0.8rem;
+    font-size: 14px;
+    min-width: 100px;
+  }
+
+  .setting {
+    padding: 0.5rem 0.8rem;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-buttons {
+    gap: 0.4rem;
+  }
+
+  .code-Editor {
+    padding: 0.4rem 0.6rem;
+    font-size: 13px;
+    min-width: 90px;
+  }
+
+  .setting {
+    padding: 0.4rem 0.6rem;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .header-buttons {
+    gap: 0.3rem;
+  }
+
+  .code-Editor {
+    padding: 0.3rem 0.5rem;
+    font-size: 12px;
+    min-width: 85px;
+  }
+
+  .setting {
+    padding: 0.3rem 0.5rem;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .setting {
+    display: none; /* Hide only the settings button */
+  }
+
+  .code-Editor {
+    margin-right: 10px; /* Add some space between code editor and hamburger */
+  }
+}
+
+/* Light theme adjustments for footer */
+.light-theme .footer-section ul li,
+.light-theme .footer-section ul li a {
+  color: #333333;
+}
+
+.light-theme .footer-section ul li a:hover {
+  color: #235d9f;
+}
+
+.light-theme .footer-section ul li i {
+  color: #235d9f;
 }
 
 
