@@ -85,7 +85,7 @@ const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersi
   };
 
   return (
-    < div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
+    <div div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
       <div className="compiler-header">
       <select
         value={language}
@@ -138,6 +138,7 @@ const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersi
       <div className="compiler-output">
       <pre>{output}</pre>
       </div>
+    </div>
     </div>
   );
 };
