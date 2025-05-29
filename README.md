@@ -89,8 +89,8 @@ npm run dev
 ```
 
 This will **simultaneously start**:
-- 🖥️ Frontend on `http://localhost:3000`
-- ⚙️ Backend server on `http://localhost:5000`
+- 🖥️ Frontend on `http://localhost:3001`
+- ⚙️ Backend server on `http://localhost:5001`
 
 > Powered by [`concurrently`](https://www.npmjs.com/package/concurrently) to handle both in parallel.
 

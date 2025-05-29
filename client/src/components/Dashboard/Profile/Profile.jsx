@@ -43,7 +43,7 @@ const ProfileModal = ({ onSave, isEditing, onEdit, onClose, profileData: initial
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('http://localhost:5001/api/auth/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -100,7 +100,7 @@ const ProfileModal = ({ onSave, isEditing, onEdit, onClose, profileData: initial
       }
 
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/auth/profile', {
+      const response = await fetch('http://localhost:5001/api/auth/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -115,13 +115,13 @@ const ProfileModal = ({ onSave, isEditing, onEdit, onClose, profileData: initial
         onSave(data);
         if (onClose) onClose();
         document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 3000);
+        setTimeout(() => notification.remove(), 3001);
       } else {
         throw new Error(data.msg || 'Failed to update profile');
       }
     } catch (err) {
       console.error('Error updating profile:', err);
-      setTimeout(() => notification.remove(), 3000);
+      setTimeout(() => notification.remove(), 3001);
     } finally {
       setLoading(false);
     }

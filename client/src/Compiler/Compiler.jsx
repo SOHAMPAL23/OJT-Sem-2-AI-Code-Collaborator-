@@ -34,7 +34,7 @@ const Compiler = ({ darkMode, roomId }) => {
 useEffect(() => {
   if (!roomId) return;
   console.log('Connecting socket for room:', roomId);
-  socketRef.current = io('http://localhost:5000');
+  socketRef.current = io('http://localhost:5001');
 
   socketRef.current.on('connect', () => {
     console.log('Socket connected, id:', socketRef.current.id);
@@ -69,7 +69,7 @@ const handleEditorChange = (value) => {
 
   const runCode = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/compile', {
+      const res = await axios.post('http://localhost:5001/api/compile/compile', {
         language,
         version,
         code,

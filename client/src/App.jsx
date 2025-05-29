@@ -10,16 +10,18 @@ const App = () => {
   return (
     <ThemeProvider>
       <Routes>
-        <Route path="/" element={<Loginpage />} />
+        <Route path="/login" element={<Loginpage />} />
         <Route 
           path="/dashboard" 
           element={
             <ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>
+
           } 
         />
         <Route path='/editor' element={<EditorPage/>} />
+        
       </Routes>
     </ThemeProvider>
   )

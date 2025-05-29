@@ -1,0 +1,432 @@
+/* RealTimeEditor.css */
+
+body {
+  font-family: 'Inter', sans-serif; /* Recommended font */
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5; /* Light background */
+}
+
+.real-time-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Modal Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.modal input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px; /* Rounded corners */
+  font-size: 16px;
+}
+
+.modal button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+  background-color: #0056b3;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* Main Content Layout */
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* Prevent internal scrollbars from breaking layout */
+}
+
+.editor-section {
+  flex: 3; /* Takes more space */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  margin: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Ensure content inside doesn't overflow */
+}
+
+.chat-section {
+  flex: 1; /* Takes less space */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  margin: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 280px; /* Minimum width for chat */
+  max-width: 400px; /* Maximum width for chat */
+}
+
+/* Editor Controls */
+.editor-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap; /* Allow controls to wrap on smaller screens */
+}
+
+.editor-controls select,
+.editor-controls button {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editor-controls button {
+  background-color: #28a745; /* Green for run */
+  color: white;
+  border-color: #28a745;
+}
+
+.editor-controls button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.editor-controls button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.leave-room-btn {
+  background-color: #dc3545 !important; /* Red for leave */
+  border-color: #dc3545 !important;
+  margin-left: auto; /* Push to the right */
+}
+
+.leave-room-btn:hover {
+  background-color: #c82333 !important;
+}
+
+.connection-status {
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.status-indicator.connected {
+  background-color: #28a745;
+}
+
+.status-indicator.disconnected {
+  background-color: #dc3545;
+}
+
+.typing-indicator {
+  margin-left: 10px;
+  font-style: italic;
+  color: #007bff;
+}
+
+/* Monaco Editor Wrapper */
+.monaco-editor-wrapper {
+  flex: 1; /* Allows editor to take available height */
+  min-height: 300px; /* Minimum height for editor */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Input/Output Panels */
+.io-panels {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  flex-wrap: wrap; /* Allow panels to wrap */
+}
+
+.input-panel,
+.output-panel {
+  flex: 1;
+  min-width: 250px; /* Minimum width for panels */
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-panel h3,
+.output-panel h3,
+.users-in-room h3,
+.chat-section h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.input-panel textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-family: monospace;
+  resize: vertical;
+}
+
+.output-panel pre {
+  flex: 1;
+  min-height: 80px;
+  background-color: #e9ecef;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: monospace;
+  border: 1px solid #ddd;
+}
+
+/* Users in Room */
+.users-in-room {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.users-in-room ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.users-in-room li {
+  background-color: #e2e6ea;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  color: #333;
+}
+
+/* Chat Section - FIXES APPLIED HERE */
+.chat-section {
+  flex: 1; /* Allow chat section to grow/shrink */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  margin: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 280px; /* Minimum width for chat */
+  max-width: 400px; /* Maximum width for chat */
+}
+
+.chat-box {
+  flex: 1; /* Allow chat box to fill available vertical space */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto; /* Enable scrolling for messages */
+  margin-bottom: 10px;
+  background-color: #fefefe;
+  display: flex;
+  flex-direction: column; /* Stack messages vertically */
+  gap: 8px; /* Space between messages */
+  min-height: 150px; /* Ensure a minimum visible height */
+  max-height: 400px; /* Max height to prevent it from taking too much space */
+  /* Ensure messages are visible */
+  color: #333; /* Explicitly set text color */
+}
+
+.chat-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: auto; /* Push controls to bottom */
+}
+
+.chat-controls input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.chat-controls button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chat-controls button:hover {
+  background-color: #0056b3;
+}
+
+.my-message {
+  text-align: right;
+  background-color: #dcf8c6; /* Light green for own messages */
+  padding: 8px 12px;
+  border-radius: 12px;
+  align-self: flex-end; /* Align own messages to the right */
+  max-width: 80%; /* Limit message bubble width */
+  word-wrap: break-word; /* Ensure long words break */
+  color: #333; /* Ensure text is visible in light mode */
+}
+
+.other-message {
+  text-align: left;
+  background-color: #e0e0e0; /* Light gray for other messages */
+  padding: 8px 12px;
+  border-radius: 12px;
+  align-self: flex-start; /* Align other messages to the left */
+  max-width: 80%; /* Limit message bubble width */
+  word-wrap: break-word; /* Ensure long words break */
+  color: #333; /* Ensure text is visible in light mode */
+}
+
+/* Dark Mode Styles */
+.dark .modal,
+.dark .editor-section,
+.dark .chat-section,
+.dark .input-panel,
+.dark .output-panel,
+.dark .users-in-room,
+.dark .chat-box {
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+  border-color: #444;
+}
+
+.dark body {
+  background-color: #1e1e1e;
+}
+
+.dark .modal h2,
+.dark .input-panel h3,
+.dark .output-panel h3,
+.dark .users-in-room h3,
+.dark .chat-section h2 {
+  color: #f0f0f0;
+}
+
+.dark .modal input,
+.dark .editor-controls select,
+.dark .editor-controls input,
+.dark .input-panel textarea,
+.dark .chat-controls input {
+  background-color: #3a3a3a;
+  color: #f0f0f0;
+  border-color: #555;
+}
+
+.dark .output-panel pre {
+  background-color: #3a3a3a;
+  border-color: #555;
+}
+
+.dark .users-in-room li {
+  background-color: #4a4a4a;
+  color: #f0f0f0;
+}
+
+.dark .my-message {
+  background-color: #4a6a30; /* Darker green for own messages in dark mode */
+  color: #f0f0f0;
+}
+
+.dark .other-message {
+  background-color: #555;
+  color: #f0f0f0;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .editor-section,
+  .chat-section {
+    margin: 5px;
+    min-width: unset;
+    max-width: unset;
+    width: auto;
+  }
+
+  .editor-section {
+    height: auto; /* Allow editor section to grow */
+  }
+
+  .io-panels {
+    flex-direction: column;
+  }
+
+  .input-panel,
+  .output-panel {
+    min-width: unset;
+    width: 100%;
+  }
+}
