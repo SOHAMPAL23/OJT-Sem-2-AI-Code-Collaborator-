@@ -54,7 +54,7 @@ function EditorPage() {
     tabSize: 2
   });
 
-  const [roomId, setRoomId] = useState(() => localStorage.getItem('roomId') || '');
+  const roomId = localStorage.getItem('roomId') || '';
   const { isDarkTheme, toggleTheme } = useTheme();
   const [activeFileId, setActiveFileId] = useState(null);
   const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
@@ -248,7 +248,9 @@ function EditorPage() {
         handleRoomClick={() => setShowRoomModal(true)}
         handleProfileClick={() => setShowProfileModal(true)}
       />
-      
+      {
+        <h1>{roomId}</h1>
+      }
       <div className="main">
         <div className="toolkit">
           <Tooltip
