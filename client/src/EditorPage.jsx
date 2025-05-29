@@ -6,6 +6,9 @@ import Navbar from './components/Editor/Navbar/Navbar';
 import Tooltip from './components/Editor/Tooltip/Tooltip';
 import RoomModal from './components/Editor/Modals/RoomModal';
 import ProfileModal from './components/Dashboard/Profile/Profile';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 
 function EditorPage() {
   const [participants, setParticipants] = useState([]);
@@ -122,6 +125,19 @@ function EditorPage() {
     return versions[lang] || 'latest';
   };
 
+  const handleDownloadAllFiles = () => {
+  const zip = new JSZip();
+
+  files.forEach((file) => {
+    const content = fileContents[file.id] || '';
+    zip.file(file.name, content);
+  });
+
+  zip.generateAsync({ type: 'blob' }).then((content) => {
+    saveAs(content, 'all-files.zip');
+  });
+  };
+  
   const allowedExtensions = ['.py', '.js', '.java', '.cpp'];
 
   const handleCreateFile = () => {
@@ -232,7 +248,7 @@ function EditorPage() {
         handleRoomClick={() => setShowRoomModal(true)}
         handleProfileClick={() => setShowProfileModal(true)}
       />
-
+      
       <div className="main">
         <div className="toolkit">
           <Tooltip
@@ -268,6 +284,9 @@ function EditorPage() {
 
         <div className="workspace">
           <div className="code-editor">
+            <button onClick={handleDownloadAllFiles} disabled={files.length===0} className="download-btn">
+            ⬇️ Download All Files
+            </button>
             <Compiler
               darkMode={isDarkTheme}
               roomId={roomId}
@@ -276,6 +295,7 @@ function EditorPage() {
               setEditorLanguage={setEditorLanguage}
               setEditorVersion={setEditorVersion}
             />
+            
           </div>
         </div>
       </div>
