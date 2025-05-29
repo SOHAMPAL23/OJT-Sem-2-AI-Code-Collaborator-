@@ -4,6 +4,7 @@ import MonacoEditor from '@monaco-editor/react';
 import { io } from 'socket.io-client';
 import './Compiler.css';
 
+
 const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersion, setEditorLanguage,setEditorVersion }) => {
   const codeRef = useRef(code);
   const socketRef = useRef(null);
@@ -84,7 +85,8 @@ const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersi
   };
 
   return (
-    <div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
+    < div className={`compiler-container ${darkMode ? 'dark' : 'light'}`}>
+      <div className="compiler-header">
       <select
         value={language}
         onChange={(e) => {
@@ -131,9 +133,11 @@ const Compiler = ({ darkMode, roomId, code, setCode, editorLanguage, editorVersi
         onChange={(e) => setStdin(e.target.value)}
       />
       <br /><br />
-      
+
       <h3>Output:</h3>
+      <div className="compiler-output">
       <pre>{output}</pre>
+      </div>
     </div>
   );
 };

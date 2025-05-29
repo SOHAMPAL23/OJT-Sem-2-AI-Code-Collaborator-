@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import './EditorPage.css';
 import { useTheme } from './context/ThemeContext';
 import Compiler from './Compiler/Compiler';
 import Navbar from './components/Editor/Navbar/Navbar';
@@ -56,6 +56,7 @@ function EditorPage() {
 
   const roomId = localStorage.getItem('roomId') || '';
   const { isDarkTheme, toggleTheme } = useTheme();
+  const [roomId, setRoomId] = useState('');
   const [activeFileId, setActiveFileId] = useState(null);
   const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
 
@@ -243,7 +244,7 @@ function EditorPage() {
   };
 
   return (
-    <div className={`app-container ${isDarkTheme ? 'dark' : 'light'}`}>
+    <div className={`app-container ${isDarkTheme ? 'dark-theme' : 'light-theme'}`}>
       <Navbar
         handleRoomClick={() => setShowRoomModal(true)}
         handleProfileClick={() => setShowProfileModal(true)}
@@ -252,7 +253,7 @@ function EditorPage() {
         <h1>{roomId}</h1>
       }
       <div className="main">
-        <div className="toolkit">
+        <aside className="toolkit">
           <Tooltip
             showFilesPanel={showFilesPanel}
             showChatPanel={showChatPanel}
@@ -282,9 +283,9 @@ function EditorPage() {
             onFileClick={handleFileClick}
             activeFileId={activeFileId}
           />
-        </div>
+        </aside>
 
-        <div className="workspace">
+        <main className="workspace">
           <div className="code-editor">
             <button onClick={handleDownloadAllFiles} disabled={files.length===0} className="download-btn">
             ⬇️ Download All Files
@@ -299,9 +300,8 @@ function EditorPage() {
             />
             
           </div>
-        </div>
+        </main>
       </div>
-
       {showRoomModal && (
         <RoomModal onClose={() => setShowRoomModal(false)} />
       )}

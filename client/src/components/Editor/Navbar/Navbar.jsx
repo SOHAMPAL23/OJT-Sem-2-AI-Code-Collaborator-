@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import backImage from '../../../assets/icons8-back-button-48.png';
+import '../../../EditorPage.css';
 
 const Navbar = ({ handleRoomClick, handleProfileClick }) => {
   const navigate = useNavigate();
