@@ -138,6 +138,26 @@ body.dark-theme .share-btn:hover {
   color: rgb(0, 0, 0);
 }
 
+.download-btn {
+  padding: 6px 12px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+  display: inline-block;
+}
+
+.download-btn:hover {
+  background-color: #0056b3;
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+ 
+}
 /* Main Content */
 .main {
   flex: 1;
@@ -1379,6 +1399,12 @@ body.dark-theme .role-option:hover {
 
 .back-icon {
   font-size: 1.2rem;
+}
+
+.file-item.active {
+  background-color: #00ffdd;
+  color: white;
+  font-weight: bold;
 }
 
 /* Dark Theme Variables */

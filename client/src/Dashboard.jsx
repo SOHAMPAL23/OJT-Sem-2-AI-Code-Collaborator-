@@ -8,6 +8,7 @@ import Features from './components/Dashboard/Features/Features';
 import ProfileModel from './components/Dashboard/Profile/Profile';
 import Footer from './components/Dashboard/Footer/Footer';
 import SettingsModal from './components/Dashboard/Modals/SettingsModal';
+import { clearLocalStorageExceptDark } from './Chat/Chat';
 
 function DashboardPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,6 +86,7 @@ function DashboardPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    clearLocalStorageExceptDark()
     navigate('/');
   };
 
