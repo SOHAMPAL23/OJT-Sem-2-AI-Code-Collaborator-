@@ -39,6 +39,8 @@ function DashboardPage() {
 
   // Notification handlers
   const showNotification = (message) => {
+    if (!settings.notifications) return; // Don't show if notifications are disabled
+    
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.textContent = message;
