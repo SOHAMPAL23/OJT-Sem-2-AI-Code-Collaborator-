@@ -1,138 +1,165 @@
 :root {
   --bg-light: #f0f0f0;
   --bg-dark: #1a1a2e;
-  --border-color: rgba(0, 0, 0, 0.1);
+  --text-color-light: #000;
+  --text-color-dark: #f5f5f5;
+  --accent-color: #3f51b5;
+  --border-color: rgba(0, 0, 0, 0.2);
 }
 
 body.dark-theme {
   --bg-light: #1a1a2e;
   --bg-dark: #121212;
+  --text-color-light: #f5f5f5;
 }
 
+body {
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text-color-light);
+  background: var(--bg-light);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Compiler container */
 .compiler-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  gap: 1rem;
   background: var(--bg-light);
-  color: var(--text-color);
+  color: var(--text-color-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
   transition: background 0.3s, color 0.3s;
 }
 
-.compiler-container select,
-.compiler-container textarea {
-  width: 100px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+body.dark-theme .compiler-container {
+  background: var(--bg-dark);
+  color: var(--text-color-dark);
+}
+
+/* Compiler header (select & button) */
+.compiler-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.compiler-header select {
   padding: 0.5rem;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  background: var(--bg-color);
-  color: var(--text-color);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  background: var(--bg-light);
+  color: var(--text-color-light);
   transition: background 0.3s, color 0.3s;
 }
 
-.compiler-container button {
-  align-self: flex-start;
+body.dark-theme .compiler-header select {
+  background: var(--bg-dark);
+  color: var(--text-color-dark);
+}
+
+.compiler-header button {
   background: var(--accent-color);
   color: #fff;
   border: none;
   border-radius: 6px;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
-  max-height: 300px; /* or any value that suits your layout */
-  overflow-y: auto;
 }
 
-.compiler-container button:hover {
+.compiler-header button:hover {
   background: #2d6bb0;
   transform: translateY(-2px);
 }
 
-.compiler-container pre {
-  background: rgba(0, 0, 0, 0.05);
-  padding: 0.5rem;
-  border-radius: 4px;
-  overflow-x: auto;
+/* Monaco editor */
+.monaco-editor {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
   max-width: 100%;
-  white-space: pre-wrap;
 }
 
-body.dark-theme .compiler-container pre {
+/* Input field */
+.compiler-input input {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-light);
+  color: var(--text-color-light);
+  box-sizing: border-box;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-theme .compiler-input input {
+  background: var(--bg-dark);
+  color: var(--text-color-dark);
+}
+
+/* Output area */
+.compiler-output {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 0.75rem;
+  overflow-x: auto;
+  max-height: 300px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+body.dark-theme .compiler-output {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.compiler-output pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Responsive tweaks */
 @media (max-width: 768px) {
-  .compiler-container select,
-  .compiler-container textarea {
-    font-size: 0.8rem;
+  .compiler-header {
+    gap: 0.5rem;
   }
 
-  .compiler-container button {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.75rem;
+  .compiler-header select,
+  .compiler-header button {
+    font-size: 0.95rem;
+  }
+
+  .compiler-container {
+    margin: 0.5rem;
+    padding: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
+  .compiler-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .compiler-header select,
+  .compiler-header button {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
   .compiler-container {
-    padding: 0.75rem;
+    padding: 0.5rem;
   }
-
-  .compiler-container select,
-  .compiler-container textarea {
-    font-size: 0.75rem;
-  }
-
-  .compiler-container button {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.6rem;
-  }
-}
-
-.main {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
-
-.toolkit {
-  width: 200px; /* default width */
-  min-width: 100px;
-  max-width: 400px;
-  background: rgba(0, 0, 0, 0.05);
-  transition: width 0.2s ease;
-}
-
-body.dark-theme .toolkit {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.workspace {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-}
-
-/* Resizer Style */
-.resizer {
-  width: 4px;
-  background: var(--border-color);
-  cursor: ew-resize;
-  position: relative;
-  z-index: 10;
-}
-
-.resizer:hover {
-  background: var(--accent-color);
-}
-
-.compiler-header{
-  display: flex;
-  justify-content: space-between;
-  align-items: left;
 }
