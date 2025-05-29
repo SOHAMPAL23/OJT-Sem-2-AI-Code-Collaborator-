@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './EditorPage.css';
+import './App.css';
 import { useTheme } from './context/ThemeContext';
 import Compiler from './Compiler/Compiler';
 import Navbar from './components/Editor/Navbar/Navbar';
@@ -56,7 +56,6 @@ function EditorPage() {
 
   const roomId = localStorage.getItem('roomId') || '';
   const { isDarkTheme, toggleTheme } = useTheme();
-  const [roomId, setRoomId] = useState('');
   const [activeFileId, setActiveFileId] = useState(null);
   const [code, setCode] = useState('def main():\n    print("Hello, World!")\n\nif __name__ == "__main__":\n    main()');
 
