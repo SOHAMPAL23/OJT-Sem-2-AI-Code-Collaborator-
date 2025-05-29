@@ -87,11 +87,19 @@ body.modal-open {
   font-size: 30px;
   margin: 0;
   white-space: nowrap;
-  color:#235d9f
+  color: #235d9f;
 }
 
-.logo-Crux:hover{
-  color: #ffffff;  /* Slightly lighter blue on hover */
+/* Dark theme specific styles */
+body:not(.light-theme) .logo-Code,
+body:not(.light-theme) .logo-Crux {
+  color: #3f8cda;
+}
+
+/* Light theme specific styles */
+.light-theme .logo-Code,
+.light-theme .logo-Crux {
+  color: #235d9f;
 }
 
 .nav-links {
@@ -106,13 +114,14 @@ body.modal-open {
 .nav-links a {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.2s ease;
+  font-size: 22px;
+  transition: color 0.3s ease;
   white-space: nowrap;
 }
 
 .nav-links a:hover {
   color: #3f8cda;
+  text-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
 }
 
 .header-buttons {
