@@ -118,11 +118,7 @@ body:not(.light-theme) .logo-Crux {
   transition: color 0.3s ease;
   white-space: nowrap;
 }
-.nav-links a.active {
-  color: #3f8cda;
-  border-bottom: 2px solid #3f8cda;
-  font-weight: bold;
-}
+
 
 .nav-links a:hover {
   color: #3f8cda;
